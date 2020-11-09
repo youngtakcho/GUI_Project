@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="images">
+    <file alias="img_slider_handle">images/slider_handle.png</file>
+    <file alias="img_femalebody">images/female.png</file>
+    <file alias="img_malebody">images/male.png</file>
+  </qresource>
+</RCC>
