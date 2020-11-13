@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui, uic
 from PyQt5.QtCore import pyqtSlot
 from collections import defaultdict
 import sys
+from widgets import *
 
 TIMER_INTERVAL_IN_MSEC = 1000
 TIMER_START_VALUE = 12*3600+34*60+56
@@ -69,6 +70,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.btn_btmbar_back.released.connect(self.btn_back_released)
         self.btn_btmbar_stop.released.connect(self.btn_stop_timer_released)
 
+        self.btn_female.clicked.connect(self.btn_female_clicked)
+        self.btn_male.clicked.connect(self.btn_male_clicked)
+
+        self.btn_yes.released.connect(self.btn_yes_clicked)
+        self.btn_no.released.connect(self.btn_no_clicked)
 
         self.btn_btmbar_next.hide()
         self.btn_btmbar_back.hide()
@@ -94,11 +100,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.slider_b.valueChanged.connect(self.slider_b_changed)
         self.device_timer = None
 
+        self.btn_setting.released.connect(self.btn_setting_released)
 
 
 
         self.btn_test_male_clicked(True)
         self.btn_test_male_pos_clicked(True)
+
+        self.txtedit_username.focus_in_signal.connect(self.id_lineedit_has_focus)
+
+
 
     def init_screens_dic(self):
         SCREENS = [
@@ -109,7 +120,12 @@ class MainWindow(QtWidgets.QMainWindow):
             ID_PAIT_INFO_SCREEN,
             ID_SLCT_TRT_SCREEN,
             ID_POS_SCREEN,
-            ID_TIMER_SCREEN
+            ID_TIMER_SCREEN,
+            ID_SETTING_SCREEN,
+            ID_SELECT_LANG_SCREEN,
+            ID_WIFI_SELECT_SCREEN,
+            ID_WIFI_PASSWD_SCREEN,
+            ID_NET_CNT_SCREEN
         ]
 
         counter = 0
@@ -133,9 +149,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self.prog_loading.setValue(self.prog_loading.value()+50)
         if self.prog_loading.value() >= 100:
             self.stck_wnd.setCurrentIndex(1)
-            self.btn_login.released.connect(self.btn_next_released)
+            self.btn_login.released.connect(self.btn_login_released)
+
             self.timer.stop()
 
+    @pyqtSlot()
+    def id_lineedit_has_focus(self):
+        self.txtedit_username.setStyleSheet("")
+        self.txtedit_username.setText("")
+        self.txtedit_passwd.setText("")
+
+    @pyqtSlot()
+    def btn_login_released(self):
+        self.txtedit_username:QtWidgets.QLineEdit
+
+        id = self.txtedit_username.text()
+        passwd= self.txtedit_passwd.text()
+        print(id,passwd)
+        if id == "nintyning":
+            self.stck_wnd.setCurrentIndex(self.stck_wnd.currentIndex()-1)
+        else:
+            self.txtedit_username.setStyleSheet("QLineEdit#txtedit_username{color:rgb(155,0,0);}")
+            self.txtedit_username.setText("Incorrect id or Password...")
 
     @pyqtSlot()
     def btn_back_released(self):
@@ -144,6 +179,27 @@ class MainWindow(QtWidgets.QMainWindow):
     @pyqtSlot()
     def btn_next_released(self):
         self.stck_wnd.setCurrentIndex(self.stck_wnd.currentIndex()+1)
+
+
+    @pyqtSlot(bool)
+    def btn_female_clicked(self,checked):
+        if checked is False and self.btn_male.isChecked() is False:
+            self.btn_female.setChecked(True)
+        self.btn_male.setChecked(False)
+
+    @pyqtSlot(bool)
+    def btn_male_clicked(self,checked):
+        if checked is False and self.btn_female.isChecked() is False:
+            self.btn_male.setChecked(True)
+        self.btn_female.setChecked(False)
+
+    @pyqtSlot()
+    def btn_yes_clicked(self):
+        self.btn_next_released()
+
+    @pyqtSlot()
+    def btn_no_clicked(self):
+        self.btn_next_released()
 
 
 
@@ -243,7 +299,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def bottom_bar_conrtol(self,page_number):
-        if BottomBar_showing_info[page_number][0] is True:
+        if BottomBar_showing_info[page_number][2] is True:
             self.btn_btmbar_next.show()
         else:
             self.btn_btmbar_next.hide()
@@ -253,7 +309,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.btn_btmbar_stop.hide()
 
-        if BottomBar_showing_info[page_number][2] is True:
+        if BottomBar_showing_info[page_number][0] is True:
             self.btn_btmbar_back.show()
         else:
             self.btn_btmbar_back.hide()
@@ -275,6 +331,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.display_timer()
         self.slider_a.setValue(0)
         self.slider_b.setValue(0)
+
+    @pyqtSlot()
+    def btn_setting_released(self):
+        self.stck_wnd.setCurrentIndex(self.screens[ID_SETTING_SCREEN])
 
     def display_timer(self):
         HH = int(self.timer_counter / 3600)

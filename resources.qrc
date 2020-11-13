@@ -1,6 +1,14 @@
 <RCC>
   <qresource prefix="images">
+    <file alias="timer_frame">images/frame1.png</file>
+    <file alias="timer_frame2">images/frame11.png</file>
+    <file alias="img_frame_bg1">images/frame1.png</file>
+    <file alias="img_frame_bg2">images/frame2.png</file>
+    <file alias="img_frame_bg22">images/frame22.png</file>
+    <file alias="img_button_bg1">images/button_background1.png</file>
+    <file alias="img_button_bg2">images/button_background2.png</file>
     <file alias="img_slider_handle">images/slider_handle.png</file>
+    <file alias="img_frame_bg">images/frame_background.png</file>
     <file alias="img_femalebody">images/female.png</file>
     <file alias="img_malebody">images/male.png</file>
   </qresource>
