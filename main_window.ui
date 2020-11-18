@@ -99,19 +99,6 @@ border-bottom: 3px solid rgba(15, 220, 232,255);
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="1">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>1223</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label">
          <property name="font">
@@ -127,36 +114,6 @@ border-bottom: 3px solid rgba(15, 220, 232,255);
          </property>
          <property name="text">
           <string>UTA</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QPushButton" name="btn_setting">
-         <property name="styleSheet">
-          <string notr="true">QPushButton {
-	background-color:rgba(255, 255, 255, 0);
-	border-radius: 5px;
-}
-
-QPushButton:pressed {
-    background-color:rgb(214, 214, 214)
-}</string>
-         </property>
-         <property name="locale">
-          <locale language="English" country="UnitedStates"/>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>images/settings-icon.png</normaloff>images/settings-icon.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>72</width>
-           <height>72</height>
-          </size>
          </property>
         </widget>
        </item>
@@ -190,6 +147,49 @@ QPushButton:pressed {
          </property>
         </widget>
        </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="btn_setting">
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+	background-color:rgba(255, 255, 255, 0);
+	border-radius: 5px;
+}
+
+QPushButton:pressed {
+    background-color:rgb(214, 214, 214)
+}</string>
+         </property>
+         <property name="locale">
+          <locale language="English" country="UnitedStates"/>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>images/settings-icon.png</normaloff>images/settings-icon.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>72</width>
+           <height>72</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>1223</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
     </item>
@@ -216,7 +216,7 @@ background-color:qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5,
        <number>0</number>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="splash_screen">
        <layout class="QGridLayout" name="gridLayout_3">
@@ -1568,7 +1568,7 @@ color:rgba(15, 220, 232,255);
           <x>320</x>
           <y>560</y>
           <width>441</width>
-          <height>111</height>
+          <height>141</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -1594,7 +1594,7 @@ color:rgba(15, 120, 172,255);
            <x>0</x>
            <y>0</y>
            <width>171</width>
-           <height>51</height>
+           <height>71</height>
           </rect>
          </property>
          <property name="font">
@@ -2718,8 +2718,8 @@ margin-bottom: -8px;
        </widget>
       </widget>
       <widget class="QWidget" name="setting_screen">
-       <layout class="QVBoxLayout" name="verticalLayout_15">
-        <item>
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="0" column="0">
          <widget class="QFrame" name="frame_5">
           <property name="styleSheet">
            <string notr="true">QFrame{
@@ -2738,15 +2738,15 @@ margin-bottom: -8px;
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>30</y>
              <width>1581</width>
-             <height>131</height>
+             <height>211</height>
             </rect>
            </property>
            <property name="font">
             <font>
              <family>Segoe UI</family>
-             <pointsize>50</pointsize>
+             <pointsize>72</pointsize>
             </font>
            </property>
            <property name="styleSheet">
@@ -2760,155 +2760,193 @@ color: rgb(3, 238, 241);</string>
             <set>Qt::AlignCenter</set>
            </property>
           </widget>
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="btn_restore_default">
            <property name="geometry">
             <rect>
-             <x>330</x>
-             <y>530</y>
-             <width>321</width>
-             <height>91</height>
+             <x>310</x>
+             <y>310</y>
+             <width>411</width>
+             <height>131</height>
             </rect>
            </property>
            <property name="font">
             <font>
-             <pointsize>16</pointsize>
+             <family>Segoe UI</family>
+             <pointsize>32</pointsize>
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true">background-color: rgb(1, 115, 115);
-border-radius:10px;</string>
-           </property>
-           <property name="text">
-            <string>SYSTEM INFO</string>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="pushButton_2">
-           <property name="geometry">
-            <rect>
-             <x>330</x>
-             <y>410</y>
-             <width>321</width>
-             <height>91</height>
-            </rect>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>16</pointsize>
-            </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb(1, 115, 115);
-border-radius:10px;</string>
-           </property>
-           <property name="text">
-            <string>LANGUAGE</string>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="pushButton_3">
-           <property name="geometry">
-            <rect>
-             <x>330</x>
-             <y>290</y>
-             <width>321</width>
-             <height>91</height>
-            </rect>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>16</pointsize>
-            </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb(1, 115, 115);
-border-radius:10px;</string>
+            <string notr="true">.QPushButton {
+	color:rgba(152, 220,232, 255);
+	border-image: url(./images/button_background1.png);
+	background-color: rgba(0,0,0,0);
+}
+
+.QPushButton:pressed {
+	border-image: url(./images/button_background2.png);
+	background-color: rgba(0,0,0,0);
+
+}</string>
            </property>
            <property name="text">
             <string>RESTORE DEFAULTS</string>
            </property>
           </widget>
-          <widget class="QPushButton" name="pushButton_7">
+          <widget class="QPushButton" name="btn_language">
            <property name="geometry">
             <rect>
-             <x>190</x>
-             <y>820</y>
-             <width>251</width>
-             <height>91</height>
+             <x>310</x>
+             <y>490</y>
+             <width>411</width>
+             <height>131</height>
             </rect>
            </property>
            <property name="font">
             <font>
-             <pointsize>16</pointsize>
+             <family>Segoe UI</family>
+             <pointsize>32</pointsize>
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true">background-color: rgb(1, 115, 115);
-border-radius:10px;</string>
+            <string notr="true">.QPushButton {
+	color:rgba(152, 220,232, 255);
+	border-image: url(./images/button_background1.png);
+	background-color: rgba(0,0,0,0);
+}
+
+.QPushButton:pressed {
+	border-image: url(./images/button_background2.png);
+	background-color: rgba(0,0,0,0);
+
+}</string>
            </property>
            <property name="text">
-            <string>BACK</string>
+            <string>LANGUAGE</string>
            </property>
           </widget>
-          <widget class="QPushButton" name="pushButton_4">
+          <widget class="QPushButton" name="btn_system_info">
            <property name="geometry">
             <rect>
-             <x>900</x>
-             <y>410</y>
-             <width>321</width>
-             <height>91</height>
+             <x>310</x>
+             <y>670</y>
+             <width>411</width>
+             <height>131</height>
             </rect>
            </property>
            <property name="font">
             <font>
-             <pointsize>16</pointsize>
+             <family>Segoe UI</family>
+             <pointsize>32</pointsize>
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true">background-color: rgb(1, 115, 115);
-border-radius:10px;</string>
+            <string notr="true">.QPushButton {
+	color:rgba(152, 220,232, 255);
+	border-image: url(./images/button_background1.png);
+	background-color: rgba(0,0,0,0);
+}
+
+.QPushButton:pressed {
+	border-image: url(./images/button_background2.png);
+	background-color: rgba(0,0,0,0);
+
+}</string>
+           </property>
+           <property name="text">
+            <string>SYSTEM INFO</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="btn_advanced_services">
+           <property name="geometry">
+            <rect>
+             <x>830</x>
+             <y>310</y>
+             <width>411</width>
+             <height>131</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <family>Segoe UI</family>
+             <pointsize>30</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">.QPushButton {
+	color:rgba(152, 220,232, 255);
+	border-image: url(./images/button_background1.png);
+	background-color: rgba(0,0,0,0);
+}
+
+.QPushButton:pressed {
+	border-image: url(./images/button_background2.png);
+	background-color: rgba(0,0,0,0);
+
+}</string>
+           </property>
+           <property name="text">
+            <string>ADVANCED SERVICES</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="btn_internet">
+           <property name="geometry">
+            <rect>
+             <x>830</x>
+             <y>490</y>
+             <width>411</width>
+             <height>131</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <family>Segoe UI</family>
+             <pointsize>32</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">.QPushButton {
+	color:rgba(152, 220,232, 255);
+	border-image: url(./images/button_background1.png);
+	background-color: rgba(0,0,0,0);
+}
+
+.QPushButton:pressed {
+	border-image: url(./images/button_background2.png);
+	background-color: rgba(0,0,0,0);
+
+}</string>
            </property>
            <property name="text">
             <string>INTERNET</string>
            </property>
           </widget>
-          <widget class="QPushButton" name="pushButton_5">
+          <widget class="QPushButton" name="btn_others">
            <property name="geometry">
             <rect>
-             <x>900</x>
-             <y>290</y>
-             <width>321</width>
-             <height>91</height>
+             <x>830</x>
+             <y>670</y>
+             <width>411</width>
+             <height>131</height>
             </rect>
            </property>
            <property name="font">
             <font>
-             <pointsize>16</pointsize>
+             <family>Segoe UI</family>
+             <pointsize>32</pointsize>
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true">background-color: rgb(1, 115, 115);
-border-radius:10px;</string>
-           </property>
-           <property name="text">
-            <string>ADVANCED SERVICE</string>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="pushButton_6">
-           <property name="geometry">
-            <rect>
-             <x>900</x>
-             <y>530</y>
-             <width>321</width>
-             <height>91</height>
-            </rect>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>16</pointsize>
-            </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb(1, 115, 115);
-border-radius:10px;</string>
+            <string notr="true">.QPushButton {
+	color:rgba(152, 220,232, 255);
+	border-image: url(./images/button_background1.png);
+	background-color: rgba(0,0,0,0);
+}
+
+.QPushButton:pressed {
+	border-image: url(./images/button_background2.png);
+	background-color: rgba(0,0,0,0);
+
+}</string>
            </property>
            <property name="text">
             <string>OTHERS</string>
@@ -2919,8 +2957,8 @@ border-radius:10px;</string>
        </layout>
       </widget>
       <widget class="QWidget" name="select_lang_screen">
-       <layout class="QHBoxLayout" name="horizontalLayout_27">
-        <item>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
          <widget class="QFrame" name="TestFrame">
           <property name="enabled">
            <bool>true</bool>
@@ -3047,6 +3085,38 @@ background-color: rgb(0, 94, 113);</string>
             </item>
            </widget>
           </widget>
+          <widget class="QPushButton" name="btn_ok_language">
+           <property name="geometry">
+            <rect>
+             <x>620</x>
+             <y>630</y>
+             <width>311</width>
+             <height>101</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <family>Segoe UI</family>
+             <pointsize>32</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">.QPushButton {
+	color:rgba(152, 220,232, 255);
+	border-image: url(./images/button_background1.png);
+	background-color: rgba(0,0,0,0);
+}
+
+.QPushButton:pressed {
+	border-image: url(./images/button_background2.png);
+	background-color: rgba(0,0,0,0);
+
+}</string>
+           </property>
+           <property name="text">
+            <string>OK</string>
+           </property>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -3071,8 +3141,8 @@ background-color: rgb(0, 94, 113);</string>
           <widget class="QLabel" name="label_16">
            <property name="geometry">
             <rect>
-             <x>710</x>
-             <y>10</y>
+             <x>720</x>
+             <y>30</y>
              <width>171</width>
              <height>151</height>
             </rect>
@@ -3084,7 +3154,7 @@ background-color: rgb(0, 94, 113);</string>
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap>New Folder/purepng.com-wifi-icon-bluewifi-iconwifiiconwireless-connection-1701528436172wnhhl.png</pixmap>
+            <pixmap>../../Users/ninty/Downloads/GUI_project_test/images/wifi-icon.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -3096,21 +3166,16 @@ background-color: rgb(0, 94, 113);</string>
           <widget class="QFrame" name="frame_11">
            <property name="geometry">
             <rect>
-             <x>320</x>
-             <y>170</y>
+             <x>330</x>
+             <y>200</y>
              <width>971</width>
-             <height>591</height>
+             <height>651</height>
             </rect>
            </property>
            <property name="styleSheet">
             <string notr="true">.QFrame{
-
-background-color:rgba(152, 220,232, 0);
-
-border: 2px solid rgba(152, 220,232, 200);
-
-border-radius: 10px;
-
+border-image: url(./images/frame11.png);
+	background-color:rgba(0,0,0,0);
 }</string>
            </property>
            <property name="frameShape">
@@ -3148,115 +3213,79 @@ background-color: rgba(0,0,0,0%)</string>
              <set>Qt::AlignCenter</set>
             </property>
            </widget>
-           <widget class="QPushButton" name="pushButton_10">
+           <widget class="QPushButton" name="btn_wifi_search">
             <property name="geometry">
              <rect>
-              <x>420</x>
-              <y>500</y>
-              <width>151</width>
-              <height>61</height>
+              <x>340</x>
+              <y>530</y>
+              <width>300</width>
+              <height>80</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>300</width>
+              <height>80</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>110</width>
+              <height>45</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Segoe UI</family>
+              <pointsize>32</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">.QPushButton {
+	color:rgba(152, 220,232, 255);
+	border-image: url(./images/button_background1.png);
+	background-color: rgba(0,0,0,0);
+}
+
+.QPushButton:pressed {
+	border-image: url(./images/button_background2.png);
+	background-color: rgba(0,0,0,0);
+
+}</string>
+            </property>
+            <property name="locale">
+             <locale language="English" country="UnitedStates"/>
+            </property>
+            <property name="text">
+             <string>SEARCH</string>
+            </property>
+           </widget>
+           <widget class="QListWidget" name="wifi_listWidget">
+            <property name="geometry">
+             <rect>
+              <x>250</x>
+              <y>100</y>
+              <width>461</width>
+              <height>401</height>
              </rect>
             </property>
             <property name="font">
              <font>
-              <pointsize>16</pointsize>
+              <pointsize>15</pointsize>
              </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">background-color: rgb(1, 115, 115);
-border-radius:10px;</string>
-            </property>
-            <property name="text">
-             <string>OK</string>
-            </property>
-           </widget>
-           <widget class="QScrollArea" name="scrollArea">
-            <property name="geometry">
-             <rect>
-              <x>260</x>
-              <y>90</y>
-              <width>461</width>
-              <height>381</height>
-             </rect>
             </property>
             <property name="styleSheet">
              <string notr="true">background-color: rgb(0, 115, 115);</string>
             </property>
-            <property name="verticalScrollBarPolicy">
-             <enum>Qt::ScrollBarAlwaysOn</enum>
-            </property>
-            <property name="horizontalScrollBarPolicy">
-             <enum>Qt::ScrollBarAlwaysOn</enum>
-            </property>
-            <property name="sizeAdjustPolicy">
-             <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
-            </property>
-            <property name="widgetResizable">
-             <bool>true</bool>
-            </property>
-            <widget class="QWidget" name="scrollAreaWidgetContents">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>0</y>
-               <width>444</width>
-               <height>364</height>
-              </rect>
-             </property>
-            </widget>
            </widget>
-          </widget>
-          <widget class="QPushButton" name="pushButton_11">
-           <property name="geometry">
-            <rect>
-             <x>1000</x>
-             <y>840</y>
-             <width>141</width>
-             <height>51</height>
-            </rect>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>16</pointsize>
-            </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb(1, 115, 115);
-border-radius:10px;</string>
-           </property>
-           <property name="text">
-            <string>NEXT</string>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="pushButton_12">
-           <property name="geometry">
-            <rect>
-             <x>450</x>
-             <y>840</y>
-             <width>141</width>
-             <height>51</height>
-            </rect>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>16</pointsize>
-            </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb(1, 115, 115);
-border-radius:10px;</string>
-           </property>
-           <property name="text">
-            <string>BACK</string>
-           </property>
           </widget>
          </widget>
         </item>
        </layout>
       </widget>
       <widget class="QWidget" name="wifi_passwd_screen">
-       <layout class="QVBoxLayout" name="verticalLayout_17">
-        <item>
+       <layout class="QGridLayout" name="gridLayout_7">
+        <item row="0" column="0">
          <widget class="QFrame" name="frame_12">
           <property name="styleSheet">
            <string notr="true">QFrame{
@@ -3274,21 +3303,16 @@ border-radius:10px;</string>
           <widget class="QFrame" name="frame_13">
            <property name="geometry">
             <rect>
-             <x>500</x>
-             <y>220</y>
-             <width>591</width>
-             <height>381</height>
+             <x>400</x>
+             <y>180</y>
+             <width>811</width>
+             <height>631</height>
             </rect>
            </property>
            <property name="styleSheet">
             <string notr="true">.QFrame{
-
-background-color:rgba(152, 220,232, 0);
-
-border: 1px solid rgba(152, 220,232, 200);
-
-border-radius: 10px;
-
+border-image: url(./images/frame11.png);
+	background-color:rgba(0,0,0,0);
 }</string>
            </property>
            <property name="frameShape">
@@ -3300,26 +3324,31 @@ border-radius: 10px;
            <widget class="QLineEdit" name="lineEdit">
             <property name="geometry">
              <rect>
-              <x>120</x>
-              <y>150</y>
-              <width>351</width>
-              <height>41</height>
+              <x>130</x>
+              <y>280</y>
+              <width>551</width>
+              <height>61</height>
              </rect>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+             </font>
             </property>
            </widget>
            <widget class="QLabel" name="label_19">
             <property name="geometry">
              <rect>
-              <x>120</x>
+              <x>0</x>
               <y>40</y>
-              <width>351</width>
-              <height>71</height>
+              <width>811</width>
+              <height>161</height>
              </rect>
             </property>
             <property name="font">
              <font>
               <family>Segoe UI</family>
-              <pointsize>33</pointsize>
+              <pointsize>50</pointsize>
              </font>
             </property>
             <property name="styleSheet">
@@ -3333,94 +3362,100 @@ color: rgb(3, 250, 253);</string>
              <set>Qt::AlignCenter</set>
             </property>
            </widget>
-           <widget class="QPushButton" name="pushButton_13">
+           <widget class="QPushButton" name="btn_cancel_wifi_passwd">
             <property name="geometry">
              <rect>
-              <x>90</x>
-              <y>270</y>
-              <width>151</width>
-              <height>61</height>
+              <x>60</x>
+              <y>470</y>
+              <width>300</width>
+              <height>80</height>
              </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>300</width>
+              <height>80</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>110</width>
+              <height>45</height>
+             </size>
             </property>
             <property name="font">
              <font>
-              <pointsize>16</pointsize>
+              <family>Segoe UI</family>
+              <pointsize>32</pointsize>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">background-color: rgb(1, 115, 115);
-border-radius:10px;</string>
+             <string notr="true">.QPushButton {
+	color:rgba(152, 220,232, 255);
+	border-image: url(./images/button_background1.png);
+	background-color: rgba(0,0,0,0);
+}
+
+.QPushButton:pressed {
+	border-image: url(./images/button_background2.png);
+	background-color: rgba(0,0,0,0);
+
+}</string>
             </property>
-            <property name="text">
-             <string>OK</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="pushButton_14">
-            <property name="geometry">
-             <rect>
-              <x>340</x>
-              <y>270</y>
-              <width>151</width>
-              <height>61</height>
-             </rect>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>16</pointsize>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">background-color: rgb(1, 115, 115);
-border-radius:10px;</string>
+            <property name="locale">
+             <locale language="English" country="UnitedStates"/>
             </property>
             <property name="text">
              <string>CANCEL</string>
             </property>
            </widget>
-          </widget>
-          <widget class="QPushButton" name="pushButton_15">
-           <property name="geometry">
-            <rect>
-             <x>1040</x>
-             <y>830</y>
-             <width>151</width>
-             <height>61</height>
-            </rect>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>16</pointsize>
-            </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb(1, 115, 115);
-border-radius:10px;</string>
-           </property>
-           <property name="text">
-            <string>NEXT</string>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="pushButton_16">
-           <property name="geometry">
-            <rect>
-             <x>420</x>
-             <y>830</y>
-             <width>151</width>
-             <height>61</height>
-            </rect>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>16</pointsize>
-            </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb(1, 115, 115);
-border-radius:10px;</string>
-           </property>
-           <property name="text">
-            <string>BACK</string>
-           </property>
+           <widget class="QPushButton" name="btn_ok_wifi_passwd">
+            <property name="geometry">
+             <rect>
+              <x>470</x>
+              <y>470</y>
+              <width>300</width>
+              <height>80</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>300</width>
+              <height>80</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>110</width>
+              <height>45</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Segoe UI</family>
+              <pointsize>32</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">.QPushButton {
+	color:rgba(152, 220,232, 255);
+	border-image: url(./images/button_background1.png);
+	background-color: rgba(0,0,0,0);
+}
+
+.QPushButton:pressed {
+	border-image: url(./images/button_background2.png);
+	background-color: rgba(0,0,0,0);
+
+}</string>
+            </property>
+            <property name="locale">
+             <locale language="English" country="UnitedStates"/>
+            </property>
+            <property name="text">
+             <string>OK</string>
+            </property>
+           </widget>
           </widget>
           <widget class="QLabel" name="label_20">
            <property name="geometry">
@@ -3438,7 +3473,7 @@ border-radius:10px;</string>
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap>New Folder/purepng.com-wifi-icon-bluewifi-iconwifiiconwireless-connection-1701528436172wnhhl.png</pixmap>
+            <pixmap>../../Users/ninty/Downloads/GUI_project_test/New Folder/purepng.com-wifi-icon-bluewifi-iconwifiiconwireless-connection-1701528436172wnhhl.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -3452,8 +3487,8 @@ border-radius:10px;</string>
        </layout>
       </widget>
       <widget class="QWidget" name="net_cnt_screen">
-       <layout class="QVBoxLayout" name="verticalLayout_10">
-        <item>
+       <layout class="QGridLayout" name="gridLayout_8">
+        <item row="0" column="0">
          <widget class="QFrame" name="frame_4">
           <property name="styleSheet">
            <string notr="true">QFrame{
@@ -3471,10 +3506,10 @@ border-radius:10px;</string>
           <widget class="QLabel" name="label_13">
            <property name="geometry">
             <rect>
-             <x>630</x>
-             <y>80</y>
-             <width>301</width>
-             <height>291</height>
+             <x>620</x>
+             <y>150</y>
+             <width>331</width>
+             <height>281</height>
             </rect>
            </property>
            <property name="styleSheet">
@@ -3484,7 +3519,7 @@ border-radius:10px;</string>
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap>New Folder/purepng.com-wifi-icon-bluewifi-iconwifiiconwireless-connection-1701528436172wnhhl.png</pixmap>
+            <pixmap>../../Users/ninty/Downloads/GUI_project_test/images/wifi-icon.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -3496,8 +3531,8 @@ border-radius:10px;</string>
           <widget class="QLabel" name="label_14">
            <property name="geometry">
             <rect>
-             <x>0</x>
-             <y>410</y>
+             <x>10</x>
+             <y>490</y>
              <width>1581</width>
              <height>131</height>
             </rect>
@@ -3519,48 +3554,36 @@ color: rgb(3, 238, 241);</string>
             <set>Qt::AlignCenter</set>
            </property>
           </widget>
-          <widget class="QPushButton" name="pushButton_8">
+          <widget class="QPushButton" name="btn_net_conn_ok">
            <property name="geometry">
             <rect>
-             <x>1000</x>
-             <y>830</y>
-             <width>191</width>
-             <height>71</height>
+             <x>610</x>
+             <y>710</y>
+             <width>381</width>
+             <height>121</height>
             </rect>
            </property>
            <property name="font">
             <font>
-             <pointsize>16</pointsize>
+             <family>Segoe UI</family>
+             <pointsize>32</pointsize>
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true">background-color: rgb(1, 115, 115);
-border-radius:10px;</string>
+            <string notr="true">.QPushButton {
+	color:rgba(152, 220,232, 255);
+	border-image: url(./images/button_background1.png);
+	background-color: rgba(0,0,0,0);
+}
+
+.QPushButton:pressed {
+	border-image: url(./images/button_background2.png);
+	background-color: rgba(0,0,0,0);
+
+}</string>
            </property>
            <property name="text">
-            <string>NEXT</string>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="pushButton_9">
-           <property name="geometry">
-            <rect>
-             <x>400</x>
-             <y>830</y>
-             <width>191</width>
-             <height>71</height>
-            </rect>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>16</pointsize>
-            </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb(1, 115, 115);
-border-radius:10px;</string>
-           </property>
-           <property name="text">
-            <string>BACK</string>
+            <string>OK</string>
            </property>
           </widget>
          </widget>
@@ -3640,11 +3663,13 @@ border-top: 3px solid rgba(15, 220, 232,255);
          <property name="styleSheet">
           <string notr="true">.QPushButton {
 	color:rgba(152, 220,232, 255);
-	border-image: url(./images/button_background1.png)
+	border-image: url(./images/button_background1.png);
+	background-color: rgba(0,0,0,0);
 }
 
 .QPushButton:pressed {
-	border-image: url(./images/button_background2.png)
+	border-image: url(./images/button_background2.png);
+	background-color: rgba(0,0,0,0);
 
 }</string>
          </property>
@@ -3705,11 +3730,13 @@ border-top: 3px solid rgba(15, 220, 232,255);
          <property name="styleSheet">
           <string notr="true">.QPushButton {
 	color:rgba(152, 220,232, 255);
-	border-image: url(./images/button_background1.png)
+	border-image: url(./images/button_background1.png);
+	background-color: rgba(0,0,0,0);
 }
 
 .QPushButton:pressed {
-	border-image: url(./images/button_background2.png)
+	border-image: url(./images/button_background2.png);
+	background-color: rgba(0,0,0,0);
 
 }</string>
          </property>

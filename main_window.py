@@ -3,6 +3,9 @@ from PyQt5.QtCore import pyqtSlot
 from collections import defaultdict
 import sys
 from widgets import *
+import sys
+import subprocess
+import re
 
 TIMER_INTERVAL_IN_MSEC = 1000
 TIMER_START_VALUE = 12*3600+34*60+56
@@ -100,15 +103,31 @@ class MainWindow(QtWidgets.QMainWindow):
         self.slider_b.valueChanged.connect(self.slider_b_changed)
         self.device_timer = None
 
-        self.btn_setting.released.connect(self.btn_setting_released)
-
-
-
         self.btn_test_male_clicked(True)
         self.btn_test_male_pos_clicked(True)
 
         self.txtedit_username.focus_in_signal.connect(self.id_lineedit_has_focus)
 
+
+        """for setting pages"""
+        self.btn_setting.released.connect(self.btn_setting_released)
+        self.btn_advanced_services.released.connect(self.btn_advanced_services_released)
+        self.btn_restore_default.released.connect(self.btn_restore_default_released)
+        self.btn_language.released.connect(self.btn_language_released)
+        self.btn_internet.released.connect(self.btn_internet_released)
+        self.btn_internet.released.connect(self.btn_internet_released)
+        self.btn_system_info.released.connect(self.btn_system_info_released)
+        self.btn_others.released.connect(self.btn_others_released)
+
+        self.btn_ok_language.released.connect(self.btn_ok_language_released)
+
+        self.btn_wifi_search.released.connect(self.btn_wifi_search_released)
+        self.wifi_listWidget:QtWidgets.QListWidget
+        self.wifi_listWidget.itemClicked.connect(self.wifi_listWidget_item_clicked)
+
+        self.btn_ok_wifi_passwd.released.connect(self.btn_ok_wifi_passwd_released)
+        self.btn_net_conn_ok.released.connect(self.btn_net_conn_ok_released)
+        """for setting pages"""
 
 
     def init_screens_dic(self):
@@ -146,7 +165,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def animation(self):
-        self.prog_loading.setValue(self.prog_loading.value()+50)
+        self.prog_loading.setValue(self.prog_loading.value()+20)
         if self.prog_loading.value() >= 100:
             self.stck_wnd.setCurrentIndex(1)
             self.btn_login.released.connect(self.btn_login_released)
@@ -167,7 +186,7 @@ class MainWindow(QtWidgets.QMainWindow):
         passwd= self.txtedit_passwd.text()
         print(id,passwd)
         if id == "nintyning":
-            self.stck_wnd.setCurrentIndex(self.stck_wnd.currentIndex()-1)
+            self.stck_wnd.setCurrentIndex(self.stck_wnd.currentIndex()+1)
         else:
             self.txtedit_username.setStyleSheet("QLineEdit#txtedit_username{color:rgb(155,0,0);}")
             self.txtedit_username.setText("Incorrect id or Password...")
@@ -211,7 +230,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def btn_test_male_clicked(self,clicked):
         if clicked is not True:
             return
-
         self.scene_male = QtWidgets.QGraphicsScene()
         self.image_male = QtGui.QPixmap("images/male.png")
         self.scene_male.addPixmap(self.image_male)
@@ -342,6 +360,78 @@ class MainWindow(QtWidgets.QMainWindow):
         SS = int(self.timer_counter % 60)
         display_str = "%02d:%02d:%02d"%(HH,MM,SS)
         self.lcd_timer.display(display_str)
+
+    @pyqtSlot()
+    def btn_others_released(self):
+        print("Not implemented")
+
+    @pyqtSlot()
+    def btn_system_info_released(self):
+        print("Not implemented")
+
+    @pyqtSlot()
+    def btn_internet_released(self):
+        self.stck_wnd.setCurrentIndex(self.screens[ID_WIFI_SELECT_SCREEN])
+
+    @pyqtSlot()
+    def btn_language_released(self):
+        self.stck_wnd.setCurrentIndex(self.screens[ID_SELECT_LANG_SCREEN])
+
+    @pyqtSlot()
+    def btn_restore_default_released(self):
+        print("Not implemented")
+
+    @pyqtSlot()
+    def btn_advanced_services_released(self):
+        print("Not implemented")
+
+    @pyqtSlot()
+    def btn_net_conn_ok_released(self):
+        self.stck_wnd.setCurrentIndex(self.screens[ID_SETTING_SCREEN])
+
+    @pyqtSlot()
+    def btn_ok_wifi_passwd_released(self):
+        self.stck_wnd.setCurrentIndex(self.screens[ID_NET_CNT_SCREEN])
+
+    @pyqtSlot(QtWidgets.QListWidgetItem)
+    def wifi_listWidget_item_clicked(self,item:QtWidgets.QListWidgetItem):
+        print(item.text())
+        self.stck_wnd.setCurrentIndex(self.screens[ID_WIFI_PASSWD_SCREEN])
+
+    @pyqtSlot()
+    def btn_wifi_search_released(self):
+        """self.search_wifi()"""
+        self.stck_wnd.setCurrentIndex(self.screens[ID_WIFI_PASSWD_SCREEN])
+
+    @pyqtSlot()
+    def btn_ok_language_released(self):
+        self.stck_wnd.setCurrentIndex(self.screens[ID_SETTING_SCREEN])
+
+
+
+    def search_wifi(self): #function to search and display all the available Wifi networks
+        self.wifi_listWidget.clear()
+        devices = subprocess.check_output(['netsh','wlan','show','network'])
+        devices = devices.decode()
+        devices= devices.replace("\r","")
+
+        ls = devices.split("\n")
+        ls = ls[4:]
+
+        ssid = []
+        x = 0
+        y = 0
+        while x < len(ls):
+            if x % 5 == 0:
+                ssid.append(ls[x])
+            x += 1
+        for line in ssid:
+            y = re.findall('^SSID [0-9]* : (.+)', line)
+            if len(y) > 0:
+                # print("".join(y))
+                self.wifi_listWidget.addItem("".join(y))
+
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
