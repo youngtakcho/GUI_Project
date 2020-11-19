@@ -8,7 +8,16 @@ import subprocess
 import re
 
 TIMER_INTERVAL_IN_MSEC = 1000
-TIMER_START_VALUE = 12*3600+34*60+56
+TIMER_START_VALUE = 0*3600+15*60+0
+
+"""IMAGE_RESOURCES"""
+IMAGE_FOR_MALE = "images/male.png"
+IMAGE_FOR_FEMALE = "images/female.png"
+
+"""STRING RESOURCES"""
+STRING_TIMER_NUMBER_FORMAT = "%02d:%02d:%02d"
+STRING_APPLICATOR_VALUE_FORMAT = "{value}%"
+STRING_UI_FILE_LOCATION = "./main_window.ui"
 
 ID_SPLASH_SCREEN = "splash_screen"
 ID_LOGIN_SCREEN = "login_screen"
@@ -43,92 +52,33 @@ BottomBar_showing_info   =   [ ## Back , Stop , Next
 
 class MainWindow(QtWidgets.QMainWindow):
 
-
-
     def __init__(self):
         super(MainWindow,self).__init__()
         self.screens = {}
-        uic.loadUi("main_window.ui",self)
+        uic.loadUi(STRING_UI_FILE_LOCATION,self)
         self.init_screens_dic()
         self.timer_counter = TIMER_START_VALUE # for test
-        self.stck_wnd:QtWidgets.QStackedWidget
-        self.prog_loading:QtWidgets.QProgressBar
-        self.lcd_timer:QtWidgets.QLCDNumber
-
-        self.splash_screen_process()
-        self.stck_wnd.setCurrentIndex(0)
+        """register page changing signals"""
         self.stck_wnd.currentChanged.connect(self.page_changed)
 
-        self.prog_loading.setMinimum(0)
-        self.prog_loading.setMaximum(100)
-        self.prog_loading.setValue(0)
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.animation)
+        """set frameless window"""
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
-        self.timer.start(TIMER_INTERVAL_IN_MSEC)
-        self.btn_test.released.connect(self.btn_next_released)
-        self.btn_test_2.released.connect(self.btn_next_released)
 
-        self.btn_btmbar_next.released.connect(self.btn_next_released)
-        self.btn_btmbar_back.released.connect(self.btn_back_released)
-        self.btn_btmbar_stop.released.connect(self.btn_stop_timer_released)
+        self.init_loading_screen()
+        self.init_login_screen()
 
-        self.btn_female.clicked.connect(self.btn_female_clicked)
-        self.btn_male.clicked.connect(self.btn_male_clicked)
+        self.init_qrcode_screens()
 
-        self.btn_yes.released.connect(self.btn_yes_clicked)
-        self.btn_no.released.connect(self.btn_no_clicked)
+        self.register_bottombar_button_signals()
+        self.init_patient_information_screen()
+        self.init_select_treatment_area()
+        self.init_position_electrodes_screen()
+        self.init_timer_screen()
+        self.init_setting_pages()
 
-        self.btn_btmbar_next.hide()
-        self.btn_btmbar_back.hide()
-        self.btn_btmbar_stop.hide()
-
-
-        self.txt_shoulder.hide()
-        self.txt_arm.hide()
-        self.txt_thigh.hide()
-
-        self.line_shoulder.hide()
-        self.line_arm.hide()
-        self.line_thigh.hide()
-
-        self.line_shoulder_pos_l.hide()
-        self.line_shoulder_pos_r.hide()
-        self.txt_shoulder_pos_r.hide()
-        self.txt_shoulder_pos_r.hide()
-
-
-        self.lcd_timer.display("00:00:00")
-        self.slider_a.valueChanged.connect(self.slider_a_changed)
-        self.slider_b.valueChanged.connect(self.slider_b_changed)
-        self.device_timer = None
-
+        """test values"""
         self.btn_test_male_clicked(True)
         self.btn_test_male_pos_clicked(True)
-
-        self.txtedit_username.focus_in_signal.connect(self.id_lineedit_has_focus)
-
-
-        """for setting pages"""
-        self.btn_setting.released.connect(self.btn_setting_released)
-        self.btn_advanced_services.released.connect(self.btn_advanced_services_released)
-        self.btn_restore_default.released.connect(self.btn_restore_default_released)
-        self.btn_language.released.connect(self.btn_language_released)
-        self.btn_internet.released.connect(self.btn_internet_released)
-        self.btn_internet.released.connect(self.btn_internet_released)
-        self.btn_system_info.released.connect(self.btn_system_info_released)
-        self.btn_others.released.connect(self.btn_others_released)
-
-        self.btn_ok_language.released.connect(self.btn_ok_language_released)
-
-        self.btn_wifi_search.released.connect(self.btn_wifi_search_released)
-        self.wifi_listWidget:QtWidgets.QListWidget
-        self.wifi_listWidget.itemClicked.connect(self.wifi_listWidget_item_clicked)
-
-        self.btn_ok_wifi_passwd.released.connect(self.btn_ok_wifi_passwd_released)
-        self.btn_net_conn_ok.released.connect(self.btn_net_conn_ok_released)
-        """for setting pages"""
-
 
     def init_screens_dic(self):
         SCREENS = [
@@ -152,31 +102,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.screens[item] = counter
             counter += 1
 
-    def splash_screen_process(self):
-        scene = QtWidgets.QGraphicsScene()
-        self.image = QtGui.QPixmap("images/logo2.png")
-        self.image = self.image.scaledToWidth(500)
-        scene.addPixmap(self.image)
-        gv:QtWidgets.QGraphicsView = self.gv_image
-        gv.setScene(scene)
-        gv.setStyleSheet("background-color: transparent;")
-        self.scene = scene
-        gv.setRenderHint(QtGui.QPainter.Antialiasing)
-
-
-    def animation(self):
-        self.prog_loading.setValue(self.prog_loading.value()+20)
-        if self.prog_loading.value() >= 100:
-            self.stck_wnd.setCurrentIndex(1)
-            self.btn_login.released.connect(self.btn_login_released)
-
-            self.timer.stop()
-
-    @pyqtSlot()
-    def id_lineedit_has_focus(self):
-        self.txtedit_username.setStyleSheet("")
-        self.txtedit_username.setText("")
-        self.txtedit_passwd.setText("")
+    def init_login_screen(self):
+        self.btn_login.released.connect(self.btn_login_released)
+        self.txtedit_username.focus_in_signal.connect(self.id_lineedit_has_focus)
 
     @pyqtSlot()
     def btn_login_released(self):
@@ -185,11 +113,29 @@ class MainWindow(QtWidgets.QMainWindow):
         id = self.txtedit_username.text()
         passwd= self.txtedit_passwd.text()
         print(id,passwd)
-        if id == "nintyning":
-            self.stck_wnd.setCurrentIndex(self.stck_wnd.currentIndex()+1)
-        else:
-            self.txtedit_username.setStyleSheet("QLineEdit#txtedit_username{color:rgb(155,0,0);}")
-            self.txtedit_username.setText("Incorrect id or Password...")
+        # if id == "nintyning":
+        self.stck_wnd.setCurrentIndex(self.stck_wnd.currentIndex()+1)
+        # else:
+        # self.txtedit_username.setStyleSheet("QLineEdit#txtedit_username{color:rgb(155,0,0);}")
+        # self.txtedit_username.setText("Incorrect id or Password...")
+
+    @pyqtSlot()
+    def id_lineedit_has_focus(self):
+        self.txtedit_username.setStyleSheet("")
+        self.txtedit_username.setText("")
+        self.txtedit_passwd.setText("")
+
+    def init_qrcode_screens(self):
+        """set test button for QRcode screens"""
+        self.btn_test.released.connect(self.btn_next_released)
+        self.btn_test_2.released.connect(self.btn_next_released)
+
+    def register_bottombar_button_signals(self):
+        """register signals for bottom bar buttons"""
+        self.btn_btmbar_next.released.connect(self.btn_next_released)
+        self.btn_btmbar_back.released.connect(self.btn_back_released)
+        self.btn_btmbar_next.hide()
+        self.btn_btmbar_back.hide()
 
     @pyqtSlot()
     def btn_back_released(self):
@@ -199,6 +145,12 @@ class MainWindow(QtWidgets.QMainWindow):
     def btn_next_released(self):
         self.stck_wnd.setCurrentIndex(self.stck_wnd.currentIndex()+1)
 
+    def init_patient_information_screen(self):
+        """register button signals for patient information screen"""
+        self.btn_female.clicked.connect(self.btn_female_clicked)
+        self.btn_male.clicked.connect(self.btn_male_clicked)
+        self.btn_yes.released.connect(self.btn_yes_clicked)
+        self.btn_no.released.connect(self.btn_no_clicked)
 
     @pyqtSlot(bool)
     def btn_female_clicked(self,checked):
@@ -221,17 +173,94 @@ class MainWindow(QtWidgets.QMainWindow):
         self.btn_next_released()
 
 
+    def init_select_treatment_area(self):
+        """for Select Treatment Area screen"""
+        self.txt_shoulder.hide()
+        self.txt_arm.hide()
+        self.txt_thigh.hide()
+        self.line_shoulder.hide()
+        self.line_arm.hide()
+        self.line_thigh.hide()
 
-    @pyqtSlot()
-    def btn_test(self):
-        print("test works")
+    def init_position_electrodes_screen(self):
+        """for Position Electrodes screen"""
+        self.line_shoulder_pos_l.hide()
+        self.line_shoulder_pos_r.hide()
+        self.txt_shoulder_pos_r.hide()
+        self.txt_shoulder_pos_r.hide()
+
+
+    def init_timer_screen(self):
+        """for Timer Screen"""
+        self.btn_timer_stop.released.connect(self.btn_stop_timer_released)
+        self.btn_timer_stop.hide()
+        self.lcd_timer.display("00:00:00")
+        self.slider_a.valueChanged.connect(self.slider_a_changed)
+        self.slider_b.valueChanged.connect(self.slider_b_changed)
+        self.device_timer = None  # timer is killed initially
+
+
+    def init_setting_pages(self):
+        """for setting pages"""
+        self.btn_setting.released.connect(self.btn_setting_released)
+        self.btn_advanced_services.released.connect(self.btn_advanced_services_released)
+        self.btn_restore_default.released.connect(self.btn_restore_default_released)
+        self.btn_language.released.connect(self.btn_language_released)
+        self.btn_internet.released.connect(self.btn_internet_released)
+        self.btn_internet.released.connect(self.btn_internet_released)
+        self.btn_system_info.released.connect(self.btn_system_info_released)
+        self.btn_others.released.connect(self.btn_others_released)
+
+        self.btn_ok_language.released.connect(self.btn_ok_language_released)
+
+        self.btn_wifi_search.released.connect(self.btn_wifi_search_released)
+        self.wifi_listWidget:QtWidgets.QListWidget
+        self.wifi_listWidget.itemClicked.connect(self.wifi_listWidget_item_clicked)
+
+        self.btn_ok_wifi_passwd.released.connect(self.btn_ok_wifi_passwd_released)
+        self.btn_net_conn_ok.released.connect(self.btn_net_conn_ok_released)
+        """for setting pages"""
+
+
+    def init_loading_screen(self):
+        """loading screen"""
+        self.splash_screen_process()
+        self.stck_wnd.setCurrentIndex(0)
+        self.prog_loading.setMinimum(0)
+        self.prog_loading.setMaximum(100)
+        self.prog_loading.setValue(0)
+        self.test_loading_screen()
+
+    def test_loading_screen(self):
+        """ for test loading screen """
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.animation)
+        self.timer.start(TIMER_INTERVAL_IN_MSEC)
+
+    def splash_screen_process(self):
+        scene = QtWidgets.QGraphicsScene()
+        self.image = QtGui.QPixmap("images/logo2.png")
+        self.image = self.image.scaledToWidth(500)
+        scene.addPixmap(self.image)
+        gv:QtWidgets.QGraphicsView = self.gv_image
+        gv.setScene(scene)
+        gv.setStyleSheet("background-color: transparent;")
+        self.scene = scene
+        gv.setRenderHint(QtGui.QPainter.Antialiasing)
+
+
+    def animation(self):
+        self.prog_loading.setValue(self.prog_loading.value()+20)
+        if self.prog_loading.value() >= 100:
+            self.stck_wnd.setCurrentIndex(1)
+            self.timer.stop()
 
     @pyqtSlot(bool)
     def btn_test_male_clicked(self,clicked):
         if clicked is not True:
             return
         self.scene_male = QtWidgets.QGraphicsScene()
-        self.image_male = QtGui.QPixmap("images/male.png")
+        self.image_male = QtGui.QPixmap(IMAGE_FOR_MALE)
         self.scene_male.addPixmap(self.image_male)
         self.gv_humanbody.setScene(self.scene_male)
         self.gv_humanbody.setRenderHint(QtGui.QPainter.Antialiasing)
@@ -250,7 +279,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         self.scene_female = QtWidgets.QGraphicsScene()
-        self.image_female = QtGui.QPixmap("images/female.png")
+        self.image_female = QtGui.QPixmap(IMAGE_FOR_FEMALE)
         self.scene_female.addPixmap(self.image_female)
         self.gv_humanbody.setScene(self.scene_female)
         self.gv_humanbody.setRenderHint(QtGui.QPainter.Antialiasing)
@@ -266,7 +295,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if clicked is not True:
             return
         self.scene_male = QtWidgets.QGraphicsScene()
-        self.image_male = QtGui.QPixmap("images/male.png")
+        self.image_male = QtGui.QPixmap(IMAGE_FOR_MALE)
         self.scene_male.addPixmap(self.image_male)
         self.gv_humanbody_pos.setScene(self.scene_male)
         self.gv_humanbody_pos.setRenderHint(QtGui.QPainter.Antialiasing)
@@ -281,7 +310,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if clicked is not True:
             return
         self.scene_female = QtWidgets.QGraphicsScene()
-        self.image_female = QtGui.QPixmap("images/female.png")
+        self.image_female = QtGui.QPixmap(IMAGE_FOR_FEMALE)
         self.scene_female.addPixmap(self.image_female)
         self.gv_humanbody_pos.setScene(self.scene_female)
         self.gv_humanbody_pos.setRenderHint(QtGui.QPainter.Antialiasing)
@@ -291,9 +320,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.txt_shoulder_pos_r.show()
         self.txt_shoulder_pos_r.show()
 
+
     @pyqtSlot(int)
     def slider_a_changed(self,value):
-        self.txt_app_a_indicator.setText("{value}%".format(value=value))
+        self.txt_app_a_indicator.setText(STRING_APPLICATOR_VALUE_FORMAT.format(value=value))
         if self.device_timer is None and value != 0:
             self.device_timer = QtCore.QTimer()
             self.device_timer.setInterval(TIMER_INTERVAL_IN_MSEC)
@@ -302,7 +332,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot(int)
     def slider_b_changed(self,value):
-        self.txt_app_b_indicator.setText("{value}%".format(value=value))
+        self.txt_app_b_indicator.setText(STRING_APPLICATOR_VALUE_FORMAT.format(value=value))
         if self.device_timer is None and value != 0:
             self.device_timer = QtCore.QTimer()
             self.device_timer.setInterval(TIMER_INTERVAL_IN_MSEC)
@@ -323,16 +353,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.btn_btmbar_next.hide()
 
         if BottomBar_showing_info[page_number][1] is True:
-            self.btn_btmbar_stop.show()
+            self.btn_timer_stop.show()
         else:
-            self.btn_btmbar_stop.hide()
+            self.btn_timer_stop.hide()
 
         if BottomBar_showing_info[page_number][0] is True:
             self.btn_btmbar_back.show()
         else:
             self.btn_btmbar_back.hide()
-
-
 
     @pyqtSlot()
     def increase_timer(self):
@@ -358,7 +386,7 @@ class MainWindow(QtWidgets.QMainWindow):
         HH = int(self.timer_counter / 3600)
         MM = int(self.timer_counter % 3600 / 60)
         SS = int(self.timer_counter % 60)
-        display_str = "%02d:%02d:%02d"%(HH,MM,SS)
+        display_str = STRING_TIMER_NUMBER_FORMAT%(HH,MM,SS)
         self.lcd_timer.display(display_str)
 
     @pyqtSlot()
@@ -400,8 +428,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def btn_wifi_search_released(self):
-        """self.search_wifi()"""
-        self.stck_wnd.setCurrentIndex(self.screens[ID_WIFI_PASSWD_SCREEN])
+        self.search_wifi()
+        # self.stck_wnd.setCurrentIndex(self.screens[ID_WIFI_PASSWD_SCREEN])
 
     @pyqtSlot()
     def btn_ok_language_released(self):
@@ -432,10 +460,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.wifi_listWidget.addItem("".join(y))
 
 
-
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
+    # window.showFullScreen()
     window.show()
     app.exec_()
 

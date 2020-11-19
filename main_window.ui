@@ -216,7 +216,7 @@ background-color:qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5,
        <number>0</number>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>7</number>
       </property>
       <widget class="QWidget" name="splash_screen">
        <layout class="QGridLayout" name="gridLayout_3">
@@ -270,11 +270,16 @@ background: qlineargradient(x1: 0, y1: 0.5, x2: 1, y2: 0.5, stop: 0 rgba(152, 22
             <height>300</height>
            </size>
           </property>
+          <property name="styleSheet">
+           <string notr="true">.QWidget{
+background-color:qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0 rgba(0, 52, 63, 255), stop:1 rgba(0, 0, 0, 255));
+}</string>
+          </property>
           <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+           <enum>QFrame::NoFrame</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+           <enum>QFrame::Plain</enum>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_16">
            <item>
@@ -1511,8 +1516,8 @@ color:rgba(15, 220, 232,255);
         </property>
         <property name="geometry">
          <rect>
-          <x>260</x>
-          <y>330</y>
+          <x>250</x>
+          <y>370</y>
           <width>451</width>
           <height>121</height>
          </rect>
@@ -1776,7 +1781,7 @@ color:rgba(15, 220, 232,255);
             <string notr="true">.QGraphicsView{
 	background-color:rgba(255, 255, 255, 0);
 border-width: 0px;
-border-style: solid
+border-style: solid;
 }
 </string>
            </property>
@@ -2663,7 +2668,7 @@ margin-bottom: -8px;
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="btn_btmbar_stop">
+          <widget class="QPushButton" name="btn_timer_stop">
            <property name="minimumSize">
             <size>
              <width>300</width>
