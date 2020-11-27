@@ -5,6 +5,10 @@ import subprocess
 import re
 import BackEndCommunicator
 from PreDefineValues import *
+import os
+import platform
+import time
+import socket
 
 
 class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
@@ -329,11 +333,29 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
 
     @pyqtSlot()
     def btn_ok_wifi_passwd_released(self):
-        self.stck_wnd.setCurrentIndex(self.screens[ID_NET_CNT_SCREEN])
+        self.wifi_pass_lineEdit:QtWidgets.QLineEdit
+        self.wifi_status_label.setText("Connecting")
+        self.wifi_password = self.wifi_pass_lineEdit.text()
+        self.createNewConnection(self.wifi_username, self.wifi_username, self.wifi_password)
+        self.connect(self.wifi_username, self.wifi_username)
+        try:
+            socket.create_connection(("1.1.1.1", 53))
+            wifi_status = True
+        except Exception as e:
+            wifi_status = False
+        
+        if wifi_status == True:
+            self.stck_wnd.setCurrentIndex(self.screens[ID_NET_CNT_SCREEN])
+        else:
+            self.wifi_status_label.setStyleSheet("QLabel#wifi_status_label{color:rgb(155,0,0); background-color:rgb(0,0,0,0%);}")
+            self.wifi_status_label.setText("Incorrect Password...")
+        # self.stck_wnd.setCurrentIndex(self.screens[ID_NET_CNT_SCREEN])
 
     @pyqtSlot(QtWidgets.QListWidgetItem)
     def wifi_listWidget_item_clicked(self,item:QtWidgets.QListWidgetItem):
-        print(item.text())
+        self.wifi_username = item.text()
+        self.wifi_status_label.setText("")
+        # print(item.text())
         self.stck_wnd.setCurrentIndex(self.screens[ID_WIFI_PASSWD_SCREEN])
 
     @pyqtSlot()
@@ -349,26 +371,25 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
 
     def search_wifi(self): #function to search and display all the available Wifi networks
         self.wifi_listWidget.clear()
-        devices = subprocess.check_output(['netsh','wlan','show','network'])
-        devices = devices.decode()
-        devices= devices.replace("\r","")
+        device_ssid = []
+        devices =  subprocess.run(['nmcli','-f','SSID','dev','wifi','list'], capture_output=True, text=True).stdout
+        devices = devices.split("\n")
+        for ssid in devices[1:]:
+            if len(ssid) < 1 or ssid.startswith('--'):
+                continue
+            device_ssid.append(ssid.strip())
+        for ssid in device_ssid:
+            self.wifi_listWidget.addItem(ssid)
 
-        ls = devices.split("\n")
-        ls = ls[4:]
-
-        ssid = []
-        x = 0
-        y = 0
-        while x < len(ls):
-            if x % 5 == 0:
-                ssid.append(ls[x])
-            x += 1
-        for line in ssid:
-            y = re.findall('^SSID [0-9]* : (.+)', line)
-            if len(y) > 0:
-                # print("".join(y))
-                self.wifi_listWidget.addItem("".join(y))
-
+    def createNewConnection(self,name, SSID, key):
+        command = "nmcli dev wifi connect '"+SSID+"' password '"+key+"'"
+        os.system(command)
+    
+    def connect(self,name, SSID):
+        self.wifi_pass_lineEdit.clear()
+        command = "nmcli con up "+SSID
+        os.system(command)
+        time.sleep(7)
 
 # dialog for general message
     def show_dialog_with_message(self,msg):
