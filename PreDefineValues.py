@@ -10,6 +10,8 @@ STRING_TIMER_NUMBER_FORMAT = "%02d:%02d:%02d"
 STRING_APPLICATOR_VALUE_FORMAT = "{value}%"
 STRING_UI_FILE_MAIN_WINDOW = "./main_window.ui"
 STRING_UI_FILE_LOGIN_FAIL = "./login_fail_dialog.ui"
+STRING_UI_FILE_NET_FAIL = "./net_fail_dialog.ui"
+#STRING_UI_FILE_CONNECTING = "./connecting_dialog.ui"
 
 ID_SPLASH_SCREEN = "splash_screen"
 ID_LOGIN_SCREEN = "login_screen"
