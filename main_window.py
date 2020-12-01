@@ -10,7 +10,6 @@ import platform
 import time
 import socket
 
-
 class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
     screen_changed_stack = []
 
@@ -338,26 +337,12 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
         self.wifi_password = self.wifi_pass_lineEdit.text()
         #self.show_connecting_dialog()
         self.createNewConnection(self.wifi_username, self.wifi_username, self.wifi_password)
-        self.connect(self.wifi_username, self.wifi_username)
-        try:
-            socket.create_connection(("1.1.1.1", 53))
-            wifi_status = True
-        except Exception as e:
-            wifi_status = False
         
-        if wifi_status == True:
-            self.stck_wnd.setCurrentIndex(self.screens[ID_NET_CNT_SCREEN])
-        else:
-            self.show_net_fail_dialog()
-            # self.wifi_status_label.setStyleSheet("QLabel#wifi_status_label{color:rgb(155,0,0); background-color:rgb(0,0,0,0%);}")
-            # self.wifi_status_label.setText("Incorrect Password...")
-        # self.stck_wnd.setCurrentIndex(self.screens[ID_NET_CNT_SCREEN])
-
     @pyqtSlot(QtWidgets.QListWidgetItem)
     def wifi_listWidget_item_clicked(self,item:QtWidgets.QListWidgetItem):
         self.wifi_username = item.text()
         self.wifi_status_label.setText("")
-        # print(item.text())
+        self.wifi_pass_lineEdit.clear()
         self.stck_wnd.setCurrentIndex(self.screens[ID_WIFI_PASSWD_SCREEN])
 
     @pyqtSlot()
@@ -384,14 +369,21 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
             self.wifi_listWidget.addItem(ssid)
 
     def createNewConnection(self,name, SSID, key):
+        self.wifi_status_label.setText("Connecting")
         command = "nmcli dev wifi connect '"+SSID+"' password '"+key+"'"
         os.system(command)
-    
-    def connect(self,name, SSID):
-        self.wifi_pass_lineEdit.clear()
-        command = "nmcli con up "+SSID
-        os.system(command)
-        time.sleep(4)
+        #time.sleep(2)
+        try:
+            socket.create_connection(("1.1.1.1", 53))
+            wifi_status = True
+        except Exception as e:
+            wifi_status = False
+        
+        if wifi_status == True:
+            self.stck_wnd.setCurrentIndex(self.screens[ID_NET_CNT_SCREEN])
+        else:
+            self.show_net_fail_dialog()
+            self.wifi_status_label.setText("")
     
     def show_net_fail_dialog(self):
         dialog = QtWidgets.QDialog(self)
@@ -405,23 +397,22 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
         rw = w/2 - dw/2
         rh = h/2 - dh/2 -5
         dialog.setGeometry(rw,rh,dialog.width(),dialog.height())
-        dialog.exec()
+        dialog.open()
         
-    #def show_connecting_dialog(self):
-        #dialog = QtWidgets.QDialog(self)
-        #uic.loadUi(STRING_UI_FILE_CONNECTING,dialog)
-        #dialog.setModal(True);
-        #dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
-        #w = self.geometry().width()
-        #h = self.geometry().height()
-        #dw = dialog.geometry().width()
-        #dh = dialog.geometry().height()
-        #rw = w/2 - dw/2
-        #rh = h/2 - dh/2 -5
-        #dialog.setGeometry(rw,rh,dialog.width(),dialog.height())
-        #dialog.exec()
-        #return
-
+    # def show_connecting_dialog(self):
+    #     dialog = QtWidgets.QDialog(self)
+    #     uic.loadUi(STRING_UI_FILE_CONNECTING,dialog)
+    #     dialog.setModal(True);
+    #     dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
+    #     w = self.geometry().width()
+    #     h = self.geometry().height()
+    #     dw = dialog.geometry().width()
+    #     dh = dialog.geometry().height()
+    #     rw = w/2 - dw/2
+    #     rh = h/2 - dh/2 -5
+    #     dialog.setGeometry(rw,rh,dialog.width(),dialog.height())
+    #     dialog.show()
+        
 # dialog for general message
     def show_dialog_with_message(self,msg):
         dialog = QtWidgets.QMessageBox(self)
