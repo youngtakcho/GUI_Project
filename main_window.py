@@ -1,11 +1,12 @@
-from PyQt5 import QtCore, QtWidgets, QtGui, uic,Qt
+from PyQt5 import QtCore, QtWidgets, QtGui, uic
 from PyQt5.QtCore import pyqtSlot
 import sys
 import subprocess
 import re
 import BackEndCommunicator
 from PreDefineValues import *
-
+from widgets.loadingdialogwithmessage import LoadingDialogWithMessage
+from login_processes import LoginAttemptThread
 
 class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
     screen_changed_stack = []
@@ -83,24 +84,35 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
     @pyqtSlot()
     def btn_login_released(self):
         self.txtedit_username:QtWidgets.QLineEdit
+        self.txtedit_username:QtWidgets.QLineEdit
 
         id = self.txtedit_username.text()
         passwd= self.txtedit_passwd.text()
-        if id == "nintyning":
-            self.stck_wnd.setCurrentIndex(self.stck_wnd.currentIndex()+1)
-        else:
-            self.show_login_fail_dialog()
-        # self.txtedit_username.setStyleSheet("QLineEdit#txtedit_username{color:rgb(155,0,0);}")
-        # self.txtedit_username.setText("Incorrect id or Password...")
 
+        loginthread = LoginAttemptThread()
+        loginthread.result.connect(self.login_results)
+        loginthread.start()
+        self.loading_dialog_with_message(STRING_LOGIN_ON_PROCESSING)
+
+    @pyqtSlot(bool,str)
+    def login_results(self,is_success,msg_from_server):
+        print(msg_from_server)
+        self.dialog_on_screen.close()
+        self.show_login_result_dialog(is_success)
+
+    
     @pyqtSlot()
     def id_lineedit_has_focus(self):
         self.txtedit_username.setText("")
         self.txtedit_passwd.setText("")
 
-    def show_login_fail_dialog(self):
+    def show_login_result_dialog(self,result = False):
         dialog = QtWidgets.QDialog(self)
         uic.loadUi(STRING_UI_FILE_LOGIN_FAIL,dialog)
+        if result:
+            dialog.txt_msg.setText(STRING_LOGIN_SUCCESS)
+        else:
+            dialog.txt_msg.setText(STRING_LOGIN_FAIL)
         dialog.setModal(True);
         dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
         w = self.geometry().width()
@@ -111,6 +123,10 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
         rh = h/2 - dh/2 -5
         dialog.setGeometry(rw,rh,dialog.width(),dialog.height())
         dialog.exec()
+        if result:
+            self.btn_next_released()
+
+
 
     def init_loading_screen(self):
         """loading screen"""
@@ -140,7 +156,7 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
 
 
     def animation(self):
-        self.prog_loading.setValue(self.prog_loading.value()+20)
+        self.prog_loading.setValue(self.prog_loading.value()+50)
         if self.prog_loading.value() >= 100:
             self.stck_wnd.setCurrentIndex(1)
             self.timer.stop()
@@ -377,6 +393,20 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
         dialog.setText(msg)
         dialog.setWindowTitle("Information")
         dialog.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        self.positing_dialog_on_center(dialog)
+        self.dialog_on_screen = dialog
+        dialog.exec()
+
+# dialog for loading with message
+    def loading_dialog_with_message(self,msg):
+        dialog = LoadingDialogWithMessage(self)
+        dialog.setMessage(msg)
+        self.positing_dialog_on_center(dialog)
+        self.dialog_on_screen = dialog
+        dialog.exec()
+
+#for positing dialog on center
+    def positing_dialog_on_center(self,dialog):
         w = self.geometry().width()
         h = self.geometry().height()
         dw = dialog.geometry().width()
@@ -384,9 +414,9 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
         rw = w/2 - dw/2
         rh = h/2 - dh/2 -5
         dialog.setGeometry(rw,rh,dialog.width(),dialog.height())
-        dialog.exec()
 
-# for test will be removed
+
+    # for test will be removed
 #     @pyqtSlot(bool)
     def btn_test_male_clicked(self,clicked):
         if clicked is not True:

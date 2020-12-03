@@ -4,12 +4,19 @@ TIMER_START_VALUE = 0*3600+0*60+10
 """IMAGE_RESOURCES"""
 IMAGE_FOR_MALE = "images/male.png"
 IMAGE_FOR_FEMALE = "images/female.png"
+IMAGE_FOR_LOADING = "images/loading22.gif"
 
 """STRING RESOURCES"""
 STRING_TIMER_NUMBER_FORMAT = "%02d:%02d:%02d"
 STRING_APPLICATOR_VALUE_FORMAT = "{value}%"
 STRING_UI_FILE_MAIN_WINDOW = "./main_window.ui"
 STRING_UI_FILE_LOGIN_FAIL = "./login_fail_dialog.ui"
+STRING_UI_FILE_LOADING = "./loading_with_msg.ui"
+
+"""STRING RESOURCES FOR MESSAGES"""
+STRING_LOGIN_ON_PROCESSING = "Logging in...."
+STRING_LOGIN_FAIL = """\nId or password is incorrect    \nPlease Check\n"""
+STRING_LOGIN_SUCCESS = """\nLogin Success!\n"""
 
 ID_SPLASH_SCREEN = "splash_screen"
 ID_LOGIN_SCREEN = "login_screen"
