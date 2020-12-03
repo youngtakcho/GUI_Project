@@ -10,7 +10,11 @@ import platform
 import time
 import socket
 from widgets.loadingdialogwithmessage import LoadingDialogWithMessage
-from login_processes import LoginAttemptThread
+from server_communication import LoginAttemptThread, RequestQrCodeImage,WaitForServerAuthWithQR,WaitForServerScanResultWithQR
+from numpy import ndarray
+import numpy as np
+
+
 
 class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
     screen_changed_stack = []
@@ -39,6 +43,7 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
         """test values"""
         self.btn_test_male_clicked(True)
         self.btn_test_male_pos_clicked(True)
+        self.qr_dic = {}
 
 
     def init_screens_dic(self):
@@ -93,17 +98,21 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
         id = self.txtedit_username.text()
         passwd= self.txtedit_passwd.text()
 
-        loginthread = LoginAttemptThread()
+        loginthread = LoginAttemptThread(self)
         loginthread.result.connect(self.login_results)
         loginthread.start()
-        self.loading_dialog_with_message(STRING_LOGIN_ON_PROCESSING)
+        self.show_loading_dialog_with_message(STRING_LOGIN_ON_PROCESSING)
 
     @pyqtSlot(bool,str)
     def login_results(self,is_success,msg_from_server):
         print(msg_from_server)
-        self.dialog_on_screen.close()
+        self.close_current_dialog()
         self.show_login_result_dialog(is_success)
-
+        if is_success:
+            thread = RequestQrCodeImage(self, address=("", 8080), request_msg="request=QR_AUTH")
+            thread.imageReceived.connect(self.auth_qrcode_received)
+            thread.start()
+            self.show_loading_dialog_with_message(STRING_RECEIVING_FROM_SERVER)
 
     @pyqtSlot()
     def id_lineedit_has_focus(self):
@@ -119,16 +128,8 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
             dialog.txt_msg.setText(STRING_LOGIN_FAIL)
         dialog.setModal(True);
         dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
-        w = self.geometry().width()
-        h = self.geometry().height()
-        dw = dialog.geometry().width()
-        dh = dialog.geometry().height()
-        rw = w/2 - dw/2
-        rh = h/2 - dh/2 -5
-        dialog.setGeometry(rw,rh,dialog.width(),dialog.height())
+        self.positing_dialog_on_center(dialog)
         dialog.exec()
-        if result:
-            self.btn_next_released()
 
 
 
@@ -170,6 +171,68 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
         """set test button for QRcode screens"""
         self.btn_test.released.connect(self.btn_next_released)
         self.btn_test_2.released.connect(self.btn_next_released)
+
+    @pyqtSlot(bool,int,ndarray)
+    def auth_qrcode_received(self,is_success,qrcode_id,image):
+        if is_success and image is not None:
+            self.qr_dic[qrcode_id] = np.transpose(image,(1,0,2)).copy()
+            self.close_current_dialog()
+            self.btn_next_released()
+            thread = WaitForServerAuthWithQR(self)
+            thread.authenticatedReceived.connect(self.authenticated_received_from_server)
+            thread.start()
+        else:
+            self.close_current_dialog()
+            self.show_dialog_with_message(STRING_ERROR_RECEIVING_QRCODE)
+            self.reset_values()
+            self.go_to_start_screen()
+
+    @pyqtSlot(bool,str)
+    def authenticated_received_from_server(self,result,html):
+        if self.dialog_on_screen is not None:
+            self.dialog_on_screen.close()
+        if result:
+            QtCore.QTimer.singleShot(3000,self.request_scan_qr_code)
+            self.show_dialog_with_html_message(html)
+        else:
+            self.show_dialog_with_message(UNKNOWN_ERROR)
+            self.reset_values()
+            QtCore.QTimer.singleShot(3000,self.go_to_start_screen)
+
+    def request_scan_qr_code(self):
+        self.dialog_on_screen.close()
+        thread = RequestQrCodeImage(self)
+        thread.imageReceived.connect(self.scan_qrcode_received)
+        thread.start()
+        self.show_loading_dialog_with_message(STRING_RECV_QR_SCAN_FROM_SERVER)
+
+    @pyqtSlot(bool,int,ndarray)
+    def scan_qrcode_received(self,is_success,qrcode_id,image):
+        if is_success and image is not None:
+            self.qr_dic[qrcode_id] = np.transpose(image,(1,0,2)).copy()
+            self.close_current_dialog()
+            self.btn_next_released()
+            thread = WaitForServerScanResultWithQR(self)
+            thread.ScanningDone.connect(self.scan_done)
+            thread.start()
+        else:
+            self.close_current_dialog()
+            self.show_dialog_with_message(STRING_ERROR_RECEIVING_QRCODE)
+            self.reset_values()
+            self.go_to_start_screen()
+
+    @pyqtSlot(bool,str)
+    def scan_done(self,is_success,msg):
+        print(msg)
+        if is_success:
+            self.show_dialog_with_message(STRING_SCAN_QRCODE_SUCCESS)
+            self.btn_next_released()
+        else:
+            self.show_dialog_with_message(STRING_SCAN_QRCODE_FAIL)
+
+    def close_dialog_and_proceed_next(self):
+        self.dialog_on_screen.close()
+        self.btn_next_released()
 
     # for patient infomation screen
     def init_patient_information_screen(self):
@@ -251,7 +314,7 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
         self.timer_counter -= 1
         if self.timer_counter <= 0:
             #add designed dialog when dialog design is complite
-            self.show_dialog_with_message("Treatment is done go to Scan screen.")
+            self.show_dialog_with_message(STRING_TREATMENT_DONE)
             self.stck_wnd.setCurrentIndex(self.screens[ID_SCAN_SCREEN])
             self.btn_stop_timer_released()
         self.display_timer()
@@ -432,19 +495,30 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
 
 # dialog for general message
     def show_dialog_with_message(self,msg):
-        dialog = QtWidgets.QMessageBox(self)
+        dialog = QtWidgets.QDialog(self)
+        uic.loadUi(STRING_UI_FILE_LOGIN_FAIL,dialog)
+        dialog.txt_msg.setText(msg)
+        dialog.setModal(True)
         dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
-        dialog.setText(msg)
-        dialog.setWindowTitle("Information")
-        dialog.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        self.positing_dialog_on_center(dialog)
+        dialog.exec()
+
+
+
+    # dialog for loading with message
+    def show_loading_dialog_with_message(self, msg):
+        dialog = LoadingDialogWithMessage(self)
+        dialog.setMessage(msg)
         self.positing_dialog_on_center(dialog)
         self.dialog_on_screen = dialog
         dialog.exec()
 
-# dialog for loading with message
-    def loading_dialog_with_message(self,msg):
-        dialog = LoadingDialogWithMessage(self)
-        dialog.setMessage(msg)
+    # dialog for loading with message
+    def show_dialog_with_html_message(self, msg):
+        dialog = QtWidgets.QDialog(self)
+        dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
+        uic.loadUi(STRING_UI_FILE_HTML_DIALOG,dialog)
+        dialog.html_view.setText(msg)
         self.positing_dialog_on_center(dialog)
         self.dialog_on_screen = dialog
         dialog.exec()
@@ -524,7 +598,14 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
     #     self.line_shoulder_pos_r.show()
     #     self.txt_shoulder_pos_r.show()
     #     self.txt_shoulder_pos_r.show()
+    def close_current_dialog(self):
+        self.dialog_on_screen.close()
 
+    def reset_values(self):
+        self.timer = None
+
+    def go_to_start_screen(self):
+        self.stck_wnd.setCurrentIndex(self.screens[ID_LOGIN_SCREEN])
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
