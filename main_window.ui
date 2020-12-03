@@ -216,7 +216,7 @@ background-color:qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5,
        <number>0</number>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>11</number>
       </property>
       <widget class="QWidget" name="splash_screen">
        <layout class="QGridLayout" name="gridLayout_3">
@@ -3382,7 +3382,7 @@ border-image: url(./images/frame11.png);
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <widget class="QLineEdit" name="lineEdit">
+           <widget class="QLineEdit" name="wifi_pass_lineEdit">
             <property name="geometry">
              <rect>
               <x>130</x>
@@ -3395,6 +3395,9 @@ border-image: url(./images/frame11.png);
              <font>
               <pointsize>15</pointsize>
              </font>
+            </property>
+            <property name="echoMode">
+             <enum>QLineEdit::Password</enum>
             </property>
            </widget>
            <widget class="QLabel" name="label_19">
@@ -3473,7 +3476,7 @@ color: rgb(3, 250, 253);</string>
            <widget class="QPushButton" name="btn_ok_wifi_passwd">
             <property name="geometry">
              <rect>
-              <x>470</x>
+              <x>430</x>
               <y>470</y>
               <width>300</width>
               <height>80</height>
@@ -3515,6 +3518,32 @@ color: rgb(3, 250, 253);</string>
             </property>
             <property name="text">
              <string>OK</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="wifi_status_label">
+            <property name="geometry">
+             <rect>
+              <x>130</x>
+              <y>380</y>
+              <width>551</width>
+              <height>71</height>
+             </rect>
+            </property>
+            <property name="font">
+             <font>
+              <family>Segoe UI</family>
+              <pointsize>42</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgba(0,0,0,0%);
+color: rgb(3, 250, 253);</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
             </property>
            </widget>
           </widget>

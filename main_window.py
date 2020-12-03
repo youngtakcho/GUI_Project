@@ -1,10 +1,14 @@
-from PyQt5 import QtCore, QtWidgets, QtGui, uic
+from PyQt5 import QtCore, QtWidgets, QtGui, uic,Qt
 from PyQt5.QtCore import pyqtSlot
 import sys
 import subprocess
 import re
 import BackEndCommunicator
 from PreDefineValues import *
+import os
+import platform
+import time
+import socket
 from widgets.loadingdialogwithmessage import LoadingDialogWithMessage
 from login_processes import LoginAttemptThread
 
@@ -100,7 +104,7 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
         self.dialog_on_screen.close()
         self.show_login_result_dialog(is_success)
 
-    
+
     @pyqtSlot()
     def id_lineedit_has_focus(self):
         self.txtedit_username.setText("")
@@ -156,7 +160,7 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
 
 
     def animation(self):
-        self.prog_loading.setValue(self.prog_loading.value()+50)
+        self.prog_loading.setValue(self.prog_loading.value()+20)
         if self.prog_loading.value() >= 100:
             self.stck_wnd.setCurrentIndex(1)
             self.timer.stop()
@@ -345,11 +349,17 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
 
     @pyqtSlot()
     def btn_ok_wifi_passwd_released(self):
-        self.stck_wnd.setCurrentIndex(self.screens[ID_NET_CNT_SCREEN])
+        self.wifi_pass_lineEdit:QtWidgets.QLineEdit
+        #self.wifi_status_label.setText("Connecting")
+        self.wifi_password = self.wifi_pass_lineEdit.text()
+        #self.show_connecting_dialog()
+        self.createNewConnection(self.wifi_username, self.wifi_username, self.wifi_password)
 
     @pyqtSlot(QtWidgets.QListWidgetItem)
     def wifi_listWidget_item_clicked(self,item:QtWidgets.QListWidgetItem):
-        print(item.text())
+        self.wifi_username = item.text()
+        self.wifi_status_label.setText("")
+        self.wifi_pass_lineEdit.clear()
         self.stck_wnd.setCurrentIndex(self.screens[ID_WIFI_PASSWD_SCREEN])
 
     @pyqtSlot()
@@ -365,26 +375,60 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
 
     def search_wifi(self): #function to search and display all the available Wifi networks
         self.wifi_listWidget.clear()
-        devices = subprocess.check_output(['netsh','wlan','show','network'])
-        devices = devices.decode()
-        devices= devices.replace("\r","")
+        device_ssid = []
+        devices =  subprocess.run(['nmcli','-f','SSID','dev','wifi','list'], capture_output=True, text=True).stdout
+        devices = devices.split("\n")
+        for ssid in devices[1:]:
+            if len(ssid) < 1 or ssid.startswith('--'):
+                continue
+            device_ssid.append(ssid.strip())
+        for ssid in device_ssid:
+            self.wifi_listWidget.addItem(ssid)
 
-        ls = devices.split("\n")
-        ls = ls[4:]
+    def createNewConnection(self,name, SSID, key):
+        self.wifi_status_label.setText("Connecting")
+        command = "nmcli dev wifi connect '"+SSID+"' password '"+key+"'"
+        os.system(command)
+        #time.sleep(2)
+        try:
+            socket.create_connection(("1.1.1.1", 53))
+            wifi_status = True
+        except Exception as e:
+            wifi_status = False
 
-        ssid = []
-        x = 0
-        y = 0
-        while x < len(ls):
-            if x % 5 == 0:
-                ssid.append(ls[x])
-            x += 1
-        for line in ssid:
-            y = re.findall('^SSID [0-9]* : (.+)', line)
-            if len(y) > 0:
-                # print("".join(y))
-                self.wifi_listWidget.addItem("".join(y))
+        if wifi_status == True:
+            self.stck_wnd.setCurrentIndex(self.screens[ID_NET_CNT_SCREEN])
+        else:
+            self.show_net_fail_dialog()
+            self.wifi_status_label.setText("")
 
+    def show_net_fail_dialog(self):
+        dialog = QtWidgets.QDialog(self)
+        uic.loadUi(STRING_UI_FILE_NET_FAIL,dialog)
+        dialog.setModal(True);
+        dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
+        w = self.geometry().width()
+        h = self.geometry().height()
+        dw = dialog.geometry().width()
+        dh = dialog.geometry().height()
+        rw = w/2 - dw/2
+        rh = h/2 - dh/2 -5
+        dialog.setGeometry(rw,rh,dialog.width(),dialog.height())
+        dialog.open()
+
+    # def show_connecting_dialog(self):
+    #     dialog = QtWidgets.QDialog(self)
+    #     uic.loadUi(STRING_UI_FILE_CONNECTING,dialog)
+    #     dialog.setModal(True);
+    #     dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
+    #     w = self.geometry().width()
+    #     h = self.geometry().height()
+    #     dw = dialog.geometry().width()
+    #     dh = dialog.geometry().height()
+    #     rw = w/2 - dw/2
+    #     rh = h/2 - dh/2 -5
+    #     dialog.setGeometry(rw,rh,dialog.width(),dialog.height())
+    #     dialog.show()
 
 # dialog for general message
     def show_dialog_with_message(self,msg):

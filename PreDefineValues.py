@@ -17,6 +17,8 @@ STRING_UI_FILE_LOADING = "./loading_with_msg.ui"
 STRING_LOGIN_ON_PROCESSING = "Logging in...."
 STRING_LOGIN_FAIL = """\nId or password is incorrect    \nPlease Check\n"""
 STRING_LOGIN_SUCCESS = """\nLogin Success!\n"""
+STRING_UI_FILE_NET_FAIL = "./net_fail_dialog.ui"
+#STRING_UI_FILE_CONNECTING = "./connecting_dialog.ui"
 
 ID_SPLASH_SCREEN = "splash_screen"
 ID_LOGIN_SCREEN = "login_screen"
