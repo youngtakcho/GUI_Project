@@ -10,7 +10,8 @@ import platform
 import time
 import socket
 from widgets.loadingdialogwithmessage import LoadingDialogWithMessage
-from server_communication import LoginAttemptThread, RequestQrCodeImage,WaitForServerAuthWithQR,WaitForServerScanResultWithQR
+from widgets.wifiloadingdialogmsg import WifiLoadingDialogWithMessage
+from server_communication import LoginAttemptThread, RequestQrCodeImage,WaitForServerAuthWithQR,WaitForServerScanResultWithQR, WifiAttemptThread
 from numpy import ndarray
 import numpy as np
 
@@ -416,7 +417,49 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
         #self.wifi_status_label.setText("Connecting")
         self.wifi_password = self.wifi_pass_lineEdit.text()
         #self.show_connecting_dialog()
-        self.createNewConnection(self.wifi_username, self.wifi_username, self.wifi_password)
+        
+        wifithread = WifiAttemptThread(self.wifi_username,self.wifi_password)
+        wifithread.wifi_result_temp.connect(self.wifi_results)
+        wifithread.start()
+        self.show_wifi_loading_dialog_with_message(STRING_WIFI_CONN_ON_PROCESSING)
+        #self.show_wifi_result_dialog()
+        #self.createNewConnection(self.wifi_username, self.wifi_username, self.wifi_password)
+        try:
+            socket.create_connection(("1.1.1.1", 53))
+            wifi_status = True
+        except Exception as e:
+            wifi_status = False
+
+        if wifi_status == True:
+            self.stck_wnd.setCurrentIndex(self.screens[ID_NET_CNT_SCREEN])
+            #dialog.txt_msg.setText(STRING_WIFI_CONN_SUCCESS)
+        else:
+            self.show_net_fail_dialog()
+            #dialog.txt_msg.setText(STRING_WIFI_CONN_FAIL)
+            self.wifi_status_label.setText("")
+    
+    @pyqtSlot(bool,str)    
+    def wifi_results(self):
+        self.close_current_dialog()
+        self.show_wifi_result_dialog()
+        
+    def show_wifi_result_dialog(self):
+        dialog = QtWidgets.QDialog(self)
+        uic.loadUi(STRING_UI_FILE_NET_FAIL,dialog)
+        #self.createNewConnection(self.wifi_username, self.wifi_username, self.wifi_password)
+        try:
+            socket.create_connection(("1.1.1.1", 53))
+            wifi_status = True
+        except Exception as e:
+            wifi_status = False
+
+        if wifi_status == True:
+            #self.stck_wnd.setCurrentIndex(self.screens[ID_NET_CNT_SCREEN])
+            dialog.txt_msg.setText(STRING_WIFI_CONN_SUCCESS)
+        else:
+            #self.show_net_fail_dialog()
+            dialog.txt_msg.setText(STRING_WIFI_CONN_FAIL)
+            self.wifi_status_label.setText("")
 
     @pyqtSlot(QtWidgets.QListWidgetItem)
     def wifi_listWidget_item_clicked(self,item:QtWidgets.QListWidgetItem):
@@ -449,21 +492,9 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
             self.wifi_listWidget.addItem(ssid)
 
     def createNewConnection(self,name, SSID, key):
-        self.wifi_status_label.setText("Connecting")
         command = "nmcli dev wifi connect '"+SSID+"' password '"+key+"'"
         os.system(command)
         #time.sleep(2)
-        try:
-            socket.create_connection(("1.1.1.1", 53))
-            wifi_status = True
-        except Exception as e:
-            wifi_status = False
-
-        if wifi_status == True:
-            self.stck_wnd.setCurrentIndex(self.screens[ID_NET_CNT_SCREEN])
-        else:
-            self.show_net_fail_dialog()
-            self.wifi_status_label.setText("")
 
     def show_net_fail_dialog(self):
         dialog = QtWidgets.QDialog(self)
@@ -508,6 +539,14 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
     # dialog for loading with message
     def show_loading_dialog_with_message(self, msg):
         dialog = LoadingDialogWithMessage(self)
+        dialog.setMessage(msg)
+        self.positing_dialog_on_center(dialog)
+        self.dialog_on_screen = dialog
+        dialog.exec()
+    
+    # dialog for wifi loading message
+    def show_wifi_loading_dialog_with_message(self, msg):
+        dialog = WifiLoadingDialogWithMessage(self)
         dialog.setMessage(msg)
         self.positing_dialog_on_center(dialog)
         self.dialog_on_screen = dialog

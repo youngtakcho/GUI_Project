@@ -1,4 +1,5 @@
 from PyQt5 import QtCore
+import os
 from numpy import ndarray
 from PreDefineValues import ID_QR_CODE_AUTH,ID_QR_CODE_DOWNLOAD,ID_QR_CODE_SCAN
 
@@ -80,6 +81,24 @@ class WaitForServerScanResultWithQR(QtCore.QThread):
         <p>If you have any question, please don't hesitate to contact us.</p>
         <html>"""
         self.ScanningDone.emit(True,str_)
+    def __del__(self):
+        """socket should be free in this step"""
+        pass
+
+class WifiAttemptThread(QtCore.QThread):
+    wifi_result_temp = QtCore.pyqtSignal(bool,str)
+    def __init__(self,SSID,key,parent = None,address = ("",8080)):
+        QtCore.QThread.__init__(self,parent)
+        self.address = address
+        self.SSID = SSID
+        self.key = key
+    
+    def run(self) -> None:
+        self.sleep(3)
+        command = "nmcli dev wifi connect '"+self.SSID+"' password '"+self.key+"'"
+        os.system(command)
+        self.wifi_result_temp.emit(True,"Incorrect Credentials")
+    
     def __del__(self):
         """socket should be free in this step"""
         pass
