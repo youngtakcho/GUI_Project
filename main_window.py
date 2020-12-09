@@ -3,7 +3,6 @@ from PyQt5.QtCore import pyqtSlot
 import sys
 import subprocess
 import re
-import BackEndCommunicator
 from PreDefineValues import *
 import os
 import platform
@@ -11,7 +10,7 @@ import time
 import socket
 from widgets.loadingdialogwithmessage import LoadingDialogWithMessage
 from widgets.wifiloadingdialogmsg import WifiLoadingDialogWithMessage
-from server_communication import LoginAttemptThread, RequestQrCodeImage,WaitForServerAuthWithQR,WaitForServerScanResultWithQR, WifiAttemptThread
+
 from numpy import ndarray
 import numpy as np
 from backend import *
@@ -100,7 +99,7 @@ class MainWindow(QtWidgets.QMainWindow):
         passwd= self.txtedit_passwd.text()
 
         loginthread = LoginAttemptThread(self,(id,passwd))
-        loginthread.result.connect(self.login_results)
+        loginthread.login_result.connect(self.login_results)
         loginthread.start()
         self.show_loading_dialog_with_message(STRING_LOGIN_ON_PROCESSING)
 

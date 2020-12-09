@@ -9,9 +9,7 @@ class LoadingProcess(QtCore.QThread):
 
     def __init__(self,parent):
         QtCore.QThread.__init__(self,parent=parent)
-
     def run(self) -> None:
-
         self.msleep(500)
         self.loadingPrograssUpdated.emit(20)
         self.msleep(500)
@@ -25,16 +23,15 @@ class LoadingProcess(QtCore.QThread):
         self.msleep(500)
         self.loadingFinished.emit()
 
-
 class LoginAttemptThread(QtCore.QThread):
-    result = QtCore.pyqtSignal(bool,str)
+    login_result = QtCore.pyqtSignal(bool, str)
     def __init__(self,parent = None,address = ("",8080)):
         QtCore.QThread.__init__(self,parent)
         self.address = address
     def run(self) -> None:
         self.sleep(3)
 
-        self.result.emit(True,"id is not correct")
+        self.login_result.emit(True, "id is not correct")
     def __del__(self):
         """socket should be free in this step"""
         pass
