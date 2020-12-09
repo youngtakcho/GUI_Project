@@ -95,18 +95,7 @@ class WaitForServerScanResultWithQR(QtCore.QThread):
 
     def run(self) -> None:
         self.sleep(10)
-        str_ = """
-        <html>
-        <style>
-        h1 {text-align: center;}
-        p {text-align: center;}
-        div {text-align: center;}
-        </style>
-        <h1>Welcome, Miss Li!</h1>
-        <p>Your scan authentication has passed. </p>
-        <p>Please follow further instruction in the screen to proceed to next step.</p>
-        <p>If you have any question, please don't hesitate to contact us.</p>
-        <html>"""
+        str_ = """Success."""
         self.ScanningDone.emit(True,str_)
 
     def __del__(self):
