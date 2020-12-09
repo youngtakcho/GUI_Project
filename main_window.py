@@ -14,10 +14,10 @@ from widgets.wifiloadingdialogmsg import WifiLoadingDialogWithMessage
 from server_communication import LoginAttemptThread, RequestQrCodeImage,WaitForServerAuthWithQR,WaitForServerScanResultWithQR, WifiAttemptThread
 from numpy import ndarray
 import numpy as np
+from backend import *
 
 
-
-class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
+class MainWindow(QtWidgets.QMainWindow):
     screen_changed_stack = []
 
     def __init__(self):
@@ -99,7 +99,7 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
         id = self.txtedit_username.text()
         passwd= self.txtedit_passwd.text()
 
-        loginthread = LoginAttemptThread(self)
+        loginthread = LoginAttemptThread(self,(id,passwd))
         loginthread.result.connect(self.login_results)
         loginthread.start()
         self.show_loading_dialog_with_message(STRING_LOGIN_ON_PROCESSING)
@@ -127,12 +127,10 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
             dialog.txt_msg.setText(STRING_LOGIN_SUCCESS)
         else:
             dialog.txt_msg.setText(STRING_LOGIN_FAIL)
-        dialog.setModal(True);
+        dialog.setModal(True)
         dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
         self.positing_dialog_on_center(dialog)
         dialog.exec()
-
-
 
     def init_loading_screen(self):
         """loading screen"""
@@ -141,13 +139,10 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
         self.prog_loading.setMinimum(0)
         self.prog_loading.setMaximum(100)
         self.prog_loading.setValue(0)
-        self.test_loading_screen()
-
-    def test_loading_screen(self):
-        """ for test loading screen """
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.animation)
-        self.timer.start(TIMER_INTERVAL_IN_MSEC)
+        loading_thread = LoadingProcess(self)
+        loading_thread.loadingPrograssUpdated.connect(self.loading_update)
+        loading_thread.loadingFinished.connect(self.loading_finished)
+        loading_thread.start()
 
     def splash_screen_process(self):
         scene = QtWidgets.QGraphicsScene()
@@ -160,12 +155,13 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
         self.scene = scene
         gv.setRenderHint(QtGui.QPainter.Antialiasing)
 
+    @pyqtSlot(int)
+    def loading_update(self,progress):
+        self.prog_loading.setValue(progress)
 
-    def animation(self):
-        self.prog_loading.setValue(self.prog_loading.value()+20)
-        if self.prog_loading.value() >= 100:
-            self.stck_wnd.setCurrentIndex(1)
-            self.timer.stop()
+    @pyqtSlot()
+    def loading_finished(self):
+        self.stck_wnd.setCurrentIndex(self.screens[ID_LOGIN_SCREEN])
 
     # for auth qrcode screen
     def init_qrcode_screens(self):
@@ -417,7 +413,7 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
         #self.wifi_status_label.setText("Connecting")
         self.wifi_password = self.wifi_pass_lineEdit.text()
         #self.show_connecting_dialog()
-        
+
         wifithread = WifiAttemptThread(self.wifi_username,self.wifi_password)
         wifithread.wifi_result_temp.connect(self.wifi_results)
         wifithread.start()
@@ -437,12 +433,12 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
             self.show_net_fail_dialog()
             #dialog.txt_msg.setText(STRING_WIFI_CONN_FAIL)
             self.wifi_status_label.setText("")
-    
-    @pyqtSlot(bool,str)    
+
+    @pyqtSlot(bool,str)
     def wifi_results(self):
         self.close_current_dialog()
         self.show_wifi_result_dialog()
-        
+
     def show_wifi_result_dialog(self):
         dialog = QtWidgets.QDialog(self)
         uic.loadUi(STRING_UI_FILE_NET_FAIL,dialog)
@@ -492,14 +488,26 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
             self.wifi_listWidget.addItem(ssid)
 
     def createNewConnection(self,name, SSID, key):
+        self.wifi_status_label.setText("Connecting")
         command = "nmcli dev wifi connect '"+SSID+"' password '"+key+"'"
         os.system(command)
         #time.sleep(2)
+        try:
+            socket.create_connection(("1.1.1.1", 53))
+            wifi_status = True
+        except Exception as e:
+            wifi_status = False
+
+        if wifi_status == True:
+            self.stck_wnd.setCurrentIndex(self.screens[ID_NET_CNT_SCREEN])
+        else:
+            self.show_net_fail_dialog()
+            self.wifi_status_label.setText("")
 
     def show_net_fail_dialog(self):
         dialog = QtWidgets.QDialog(self)
         uic.loadUi(STRING_UI_FILE_NET_FAIL,dialog)
-        dialog.setModal(True);
+        dialog.setModal(True)
         dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
         w = self.geometry().width()
         h = self.geometry().height()
@@ -543,7 +551,7 @@ class MainWindow(QtWidgets.QMainWindow,BackEndCommunicator.BackEndCommunicator):
         self.positing_dialog_on_center(dialog)
         self.dialog_on_screen = dialog
         dialog.exec()
-    
+
     # dialog for wifi loading message
     def show_wifi_loading_dialog_with_message(self, msg):
         dialog = WifiLoadingDialogWithMessage(self)
