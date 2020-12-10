@@ -1706,10 +1706,10 @@ color:rgba(15, 120, 172,255);
          </property>
          <property name="geometry">
           <rect>
-           <x>170</x>
+           <x>160</x>
            <y>10</y>
-           <width>311</width>
-           <height>51</height>
+           <width>321</width>
+           <height>61</height>
           </rect>
          </property>
          <property name="font">
