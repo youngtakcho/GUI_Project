@@ -40,6 +40,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.init_timer_screen()
         self.init_setting_pages()
 
+        self.btn_female_clicked(True)
         """test values"""
         self.btn_test_male_clicked(True)
         self.btn_test_male_pos_clicked(True)
@@ -244,19 +245,27 @@ class MainWindow(QtWidgets.QMainWindow):
         if checked is False and self.btn_male.isChecked() is False:
             self.btn_female.setChecked(True)
         self.btn_male.setChecked(False)
+        self.selected_sex = SEX.FEMALE
 
     @pyqtSlot(bool)
     def btn_male_clicked(self,checked):
         if checked is False and self.btn_female.isChecked() is False:
             self.btn_male.setChecked(True)
         self.btn_female.setChecked(False)
+        self.selected_sex = SEX.MALE
 
     @pyqtSlot()
     def btn_yes_clicked(self):
+        if self.selected_sex is None:
+            return
+        updatePatientInformation(self.selected_sex, True)
         self.btn_next_released()
 
     @pyqtSlot()
     def btn_no_clicked(self):
+        if self.selected_sex is None:
+            return
+        updatePatientInformation(self.selected_sex, True)
         self.btn_next_released()
 
     # for select treatment screen
@@ -290,6 +299,8 @@ class MainWindow(QtWidgets.QMainWindow):
     @pyqtSlot(int)
     def slider_a_changed(self,value):
         self.txt_app_a_indicator.setText(STRING_APPLICATOR_VALUE_FORMAT.format(value=value))
+        value_b = self.slider_b.value()
+        updateTreatmentApplicator(value, value_b)
         if self.device_timer is None and value != 0:
             self.device_timer = QtCore.QTimer()
             self.device_timer.setInterval(TIMER_INTERVAL_IN_MSEC)
@@ -299,6 +310,8 @@ class MainWindow(QtWidgets.QMainWindow):
     @pyqtSlot(int)
     def slider_b_changed(self,value):
         self.txt_app_b_indicator.setText(STRING_APPLICATOR_VALUE_FORMAT.format(value=value))
+        value_a = self.slider_a.value()
+        updateTreatmentApplicator(value_a, value)
         if self.device_timer is None and value != 0:
             self.device_timer = QtCore.QTimer()
             self.device_timer.setInterval(TIMER_INTERVAL_IN_MSEC)

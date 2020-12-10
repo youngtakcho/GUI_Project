@@ -118,3 +118,19 @@ class WaitForServerScanResultWithQR(QtCore.QThread):
         """socket should be free in this step"""
         pass
 
+def updatePatientInformation(sex,is_new):
+    """update this to pass information to backend"""
+    pass
+
+def updateLocation(location_list):
+    """update this to pass location information to backend"""
+    pass
+
+def startTreatment():
+    pass
+
+def updateTreatmentApplicator(val_a,val_b):
+    pass
+
+def finishTreatment():
+    pass

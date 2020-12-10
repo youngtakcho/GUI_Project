@@ -50,6 +50,9 @@ ID_WIFI_SELECT_SCREEN = "wifi_select_screen"
 ID_WIFI_PASSWD_SCREEN = "wifi_passwd_screen"
 ID_NET_CNT_SCREEN = "net_cnt_screen"
 
+class SEX:
+    FEMALE = True
+    MALE = False
 
 
 
