@@ -3,6 +3,7 @@ from numpy import ndarray
 from PreDefineValues import ID_QR_CODE_AUTH,ID_QR_CODE_DOWNLOAD,ID_QR_CODE_SCAN
 import os
 
+""" Do not change this thread WifiAttemptThread"""
 class WifiAttemptThread(QtCore.QThread):
     wifi_result_temp = QtCore.pyqtSignal(bool,str)
     def __init__(self,SSID,key,parent = None,address = ("",8080)):
@@ -16,11 +17,10 @@ class WifiAttemptThread(QtCore.QThread):
         command = "nmcli dev wifi connect '"+self.SSID+"' password '"+self.key+"'"
         os.system(command)
         self.wifi_result_temp.emit(True,"Incorrect Credentials")
-
     def __del__(self):
         """socket should be free in this step"""
         pass
-
+""" Do not change this thread WifiAttemptThread"""
 
 class LoadingProcess(QtCore.QThread):
     loadingPrograssUpdated = QtCore.pyqtSignal(int)
