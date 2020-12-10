@@ -1706,9 +1706,9 @@ color:rgba(15, 120, 172,255);
          </property>
          <property name="geometry">
           <rect>
-           <x>220</x>
+           <x>170</x>
            <y>10</y>
-           <width>261</width>
+           <width>311</width>
            <height>51</height>
           </rect>
          </property>
