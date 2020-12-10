@@ -42,8 +42,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.btn_female_clicked(True)
         """test values"""
-        self.btn_test_male_clicked(True)
-        self.btn_test_male_pos_clicked(True)
+        self.set_graphic(self.selected_sex)
+        # self.btn_test_male_pos_clicked(True)
         self.qr_dic = {}
 
 
@@ -258,6 +258,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def btn_yes_clicked(self):
         if self.selected_sex is None:
             return
+        self.set_graphic(self.selected_sex)
         updatePatientInformation(self.selected_sex, True)
         self.btn_next_released()
 
@@ -265,6 +266,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def btn_no_clicked(self):
         if self.selected_sex is None:
             return
+        self.set_graphic(self.selected_sex)
         updatePatientInformation(self.selected_sex, True)
         self.btn_next_released()
 
@@ -595,13 +597,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # for test will be removed
 #     @pyqtSlot(bool)
-    def btn_test_male_clicked(self,clicked):
-        if clicked is not True:
-            return
-        self.scene_male = QtWidgets.QGraphicsScene()
-        self.image_male = QtGui.QPixmap(IMAGE_FOR_MALE)
-        self.scene_male.addPixmap(self.image_male)
-        self.gv_humanbody.setScene(self.scene_male)
+    def set_graphic(self,sex):
+        self.scene_patient = QtWidgets.QGraphicsScene()
+        if sex == SEX.MALE:
+            self.image_patient = QtGui.QPixmap(IMAGE_FOR_MALE)
+        else:
+            self.image_patient = QtGui.QPixmap(IMAGE_FOR_FEMALE)
+        self.scene_patient.addPixmap(self.image_patient)
+        self.gv_humanbody.setScene(self.scene_patient)
         self.gv_humanbody.setRenderHint(QtGui.QPainter.Antialiasing)
 
         self.txt_shoulder.show()
@@ -610,6 +613,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.line_shoulder.show()
         self.line_arm.show()
         self.line_thigh.show()
+
+        self.gv_humanbody_pos.setScene(self.scene_patient)
+        self.gv_humanbody_pos.setRenderHint(QtGui.QPainter.Antialiasing)
+
+        self.line_shoulder_pos_l.show()
+        self.line_shoulder_pos_r.show()
+        self.txt_shoulder_pos_r.show()
+        self.txt_shoulder_pos_r.show()
 
     # @pyqtSlot(bool)
     # def btn_test_female_clicked(self,clicked):
@@ -632,16 +643,16 @@ class MainWindow(QtWidgets.QMainWindow):
     def btn_test_male_pos_clicked(self,clicked):
         if clicked is not True:
             return
-        self.scene_male = QtWidgets.QGraphicsScene()
-        self.image_male = QtGui.QPixmap(IMAGE_FOR_MALE)
-        self.scene_male.addPixmap(self.image_male)
-        self.gv_humanbody_pos.setScene(self.scene_male)
-        self.gv_humanbody_pos.setRenderHint(QtGui.QPainter.Antialiasing)
-
-        self.line_shoulder_pos_l.show()
-        self.line_shoulder_pos_r.show()
-        self.txt_shoulder_pos_r.show()
-        self.txt_shoulder_pos_r.show()
+        # self.scene_patient = QtWidgets.QGraphicsScene()
+        # self.image_patient = QtGui.QPixmap(IMAGE_FOR_MALE)
+        # self.scene_patient.addPixmap(self.image_patient)
+        # self.gv_humanbody_pos.setScene(self.scene_patient)
+        # self.gv_humanbody_pos.setRenderHint(QtGui.QPainter.Antialiasing)
+        #
+        # self.line_shoulder_pos_l.show()
+        # self.line_shoulder_pos_r.show()
+        # self.txt_shoulder_pos_r.show()
+        # self.txt_shoulder_pos_r.show()
     #
     # @pyqtSlot(bool)
     # def btn_test_female_pos_clicked(self,clicked):

@@ -48,7 +48,7 @@ class LoginAttemptThread(QtCore.QThread):
         QtCore.QThread.__init__(self,parent)
         self.address = address
     def run(self) -> None:
-        self.sleep(3)
+        self.sleep(1)
 
         self.login_result.emit(True, "id is not correct")
     def __del__(self):
@@ -65,7 +65,7 @@ class RequestQrCodeImage(QtCore.QThread):
         self.qr_type = qr_type
 
     def run(self) -> None:
-        self.sleep(2)
+        self.sleep(1)
         fortest = ndarray((0,0,0))
         self.imageReceived.emit(True,self.qr_type,fortest)
 
@@ -82,7 +82,7 @@ class WaitForServerAuthWithQR(QtCore.QThread):
         self.to_serer_msg = request_msg
 
     def run(self) -> None:
-        self.sleep(10)
+        self.sleep(2)
         str_ = """
         <html>
         <style>
@@ -110,7 +110,7 @@ class WaitForServerScanResultWithQR(QtCore.QThread):
         self.to_serer_msg = request_msg
 
     def run(self) -> None:
-        self.sleep(10)
+        self.sleep(2)
         str_ = """Success."""
         self.ScanningDone.emit(True,str_)
 
