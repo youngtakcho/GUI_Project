@@ -173,8 +173,8 @@ class MainWindow(QtWidgets.QMainWindow):
     # for auth qrcode screen
     def init_qrcode_screens(self):
         """set test button for QRcode screens"""
-        self.scan_auth_btn_test.released.connect(self.btn_next_released)
-        self.scan_check_btn_test.released.connect(self.btn_next_released)
+        # self.scan_auth_btn_test.released.connect(self.btn_next_released)
+        # self.scan_check_btn_test.released.connect(self.btn_next_released)
 
     @pyqtSlot(bool,int,ndarray)
     def auth_qrcode_received(self,is_success,qrcode_id,image):
