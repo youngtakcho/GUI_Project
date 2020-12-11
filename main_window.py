@@ -273,12 +273,18 @@ class MainWindow(QtWidgets.QMainWindow):
     # for select treatment screen
     def init_select_treatment_area(self):
         """for Select Treatment Area screen"""
-        self.txt_shoulder.hide()
-        self.txt_arm.hide()
-        self.txt_thigh.hide()
-        self.line_shoulder.hide()
-        self.line_arm.hide()
-        self.line_thigh.hide()
+        self.txt_shoulder_L.hide()
+        self.txt_shoulder_R.hide()
+        self.txt_arm_L.hide()
+        self.txt_thigh_L.hide()
+        self.txt_arm_R.hide()
+        self.txt_thigh_R.hide()
+        self.line_shoulder_R.hide()
+        self.line_shoulder_L.hide()
+        self.line_arm_L.hide()
+        self.line_thigh_L.hide()
+        self.line_arm_R.hide()
+        self.line_thigh_R.hide()
 
     # for position electrodes screen
     def init_position_electrodes_screen(self):
@@ -607,12 +613,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self.gv_humanbody.setScene(self.scene_patient)
         self.gv_humanbody.setRenderHint(QtGui.QPainter.Antialiasing)
 
-        self.txt_shoulder.show()
-        self.txt_arm.show()
-        self.txt_thigh.show()
-        self.line_shoulder.show()
-        self.line_arm.show()
-        self.line_thigh.show()
+        self.txt_shoulder_L.show()
+        self.txt_shoulder_R.show()
+
+        self.txt_arm_L.show()
+        self.txt_thigh_L.show()
+        self.txt_arm_R.show()
+        self.txt_thigh_R.show()
+
+        self.line_shoulder_L.show()
+        self.line_shoulder_R.show()
+
+        self.line_arm_L.show()
+        self.line_thigh_L.show()
+        self.line_arm_R.show()
+        self.line_thigh_R.show()
 
         self.gv_humanbody_pos.setScene(self.scene_patient)
         self.gv_humanbody_pos.setRenderHint(QtGui.QPainter.Antialiasing)

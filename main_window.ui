@@ -1566,7 +1566,7 @@ color:rgba(15, 220, 232,255);
        </layout>
       </widget>
       <widget class="QWidget" name="slct_trt_screen">
-       <widget class="QFrame" name="line_arm">
+       <widget class="QFrame" name="line_arm_L">
         <property name="enabled">
          <bool>true</bool>
         </property>
@@ -1580,8 +1580,8 @@ color:rgba(15, 220, 232,255);
         </property>
         <property name="styleSheet">
          <string notr="true">QFrame{
-color:rgba(15, 120, 172,255);
-}</string>
+          color:rgba(15, 120, 172,255);
+          }</string>
         </property>
         <property name="frameShape">
          <enum>QFrame::HLine</enum>
@@ -1592,7 +1592,7 @@ color:rgba(15, 120, 172,255);
         <property name="lineWidth">
          <number>2</number>
         </property>
-        <widget class="QLabel" name="txt_arm">
+        <widget class="QLabel" name="txt_arm_L">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -1612,15 +1612,69 @@ color:rgba(15, 120, 172,255);
          </property>
          <property name="styleSheet">
           <string notr="true">.QLabel{
-color:rgba(15, 220, 232,255);
-}</string>
+           color:rgba(15, 220, 232,255);
+           }</string>
          </property>
          <property name="text">
           <string>Arm</string>
          </property>
         </widget>
        </widget>
-       <widget class="QFrame" name="line_thigh">
+       <widget class="QFrame" name="line_arm_R">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>890</x>
+          <y>370</y>
+          <width>451</width>
+          <height>121</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QFrame{
+          color:rgba(15, 120, 172,255);
+          }</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::HLine</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+        <property name="lineWidth">
+         <number>2</number>
+        </property>
+        <widget class="QLabel" name="txt_arm_R">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>300</x>
+           <y>0</y>
+           <width>151</width>
+           <height>61</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>48</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">.QLabel{
+           color:rgba(15, 220, 232,255);
+           }</string>
+         </property>
+         <property name="text">
+          <string>Arm</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QFrame" name="line_thigh_L">
         <property name="enabled">
          <bool>true</bool>
         </property>
@@ -1634,8 +1688,8 @@ color:rgba(15, 220, 232,255);
         </property>
         <property name="styleSheet">
          <string notr="true">QFrame{
-color:rgba(15, 120, 172,255);
-}</string>
+          color:rgba(15, 120, 172,255);
+          }</string>
         </property>
         <property name="frameShape">
          <enum>QFrame::HLine</enum>
@@ -1646,16 +1700,16 @@ color:rgba(15, 120, 172,255);
         <property name="lineWidth">
          <number>2</number>
         </property>
-        <widget class="QLabel" name="txt_thigh">
+        <widget class="QLabel" name="txt_thigh_L">
          <property name="enabled">
           <bool>true</bool>
          </property>
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>0</y>
+           <y>-30</y>
            <width>201</width>
-           <height>71</height>
+           <height>101</height>
           </rect>
          </property>
          <property name="font">
@@ -1666,15 +1720,69 @@ color:rgba(15, 120, 172,255);
          </property>
          <property name="styleSheet">
           <string notr="true">.QLabel{
-color:rgba(15, 220, 232,255);
-}</string>
+           color:rgba(15, 220, 232,255);
+           }</string>
          </property>
          <property name="text">
           <string>Thigh</string>
          </property>
         </widget>
        </widget>
-       <widget class="QFrame" name="line_shoulder">
+       <widget class="QFrame" name="line_thigh_R">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>840</x>
+          <y>560</y>
+          <width>441</width>
+          <height>141</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QFrame{
+          color:rgba(15, 120, 172,255);
+          }</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::HLine</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+        <property name="lineWidth">
+         <number>2</number>
+        </property>
+        <widget class="QLabel" name="txt_thigh_R">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>280</x>
+           <y>-30</y>
+           <width>201</width>
+           <height>101</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>48</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">.QLabel{
+           color:rgba(15, 220, 232,255);
+           }</string>
+         </property>
+         <property name="text">
+          <string>Thigh</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QFrame" name="line_shoulder_R">
         <property name="enabled">
          <bool>true</bool>
         </property>
@@ -1688,8 +1796,8 @@ color:rgba(15, 220, 232,255);
         </property>
         <property name="styleSheet">
          <string notr="true">QFrame{
-color:rgba(15, 120, 172,255);
-}</string>
+          color:rgba(15, 120, 172,255);
+          }</string>
         </property>
         <property name="frameShape">
          <enum>QFrame::HLine</enum>
@@ -1700,7 +1808,7 @@ color:rgba(15, 120, 172,255);
         <property name="lineWidth">
          <number>2</number>
         </property>
-        <widget class="QLabel" name="txt_shoulder">
+        <widget class="QLabel" name="txt_shoulder_R">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -1720,8 +1828,62 @@ color:rgba(15, 120, 172,255);
          </property>
          <property name="styleSheet">
           <string notr="true">.QLabel{
-color:rgba(15, 220, 232,255);
-}</string>
+           color:rgba(15, 220, 232,255);
+           }</string>
+         </property>
+         <property name="text">
+          <string>Shoulder</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QFrame" name="line_shoulder_L">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>245</x>
+          <y>280</y>
+          <width>481</width>
+          <height>141</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QFrame{
+          color:rgba(15, 120, 172,255);
+          }</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::HLine</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+        <property name="lineWidth">
+         <number>2</number>
+        </property>
+        <widget class="QLabel" name="txt_shoulder_L">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>10</y>
+           <width>321</width>
+           <height>61</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>48</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">.QLabel{
+           color:rgba(15, 220, 232,255);
+           }</string>
          </property>
          <property name="text">
           <string>Shoulder</string>
@@ -1875,9 +2037,12 @@ border-style: solid;
        </widget>
        <zorder>frame</zorder>
        <zorder>frame</zorder>
-       <zorder>line_arm</zorder>
-       <zorder>line_shoulder</zorder>
-       <zorder>line_thigh</zorder>
+       <zorder>line_shoulder_R</zorder>
+       <zorder>line_shoulder_L</zorder>
+       <zorder>line_thigh_R</zorder>
+       <zorder>line_arm_R</zorder>
+       <zorder>line_arm_L</zorder>
+       <zorder>line_thigh_L</zorder>
       </widget>
       <widget class="QWidget" name="pos_screen">
        <widget class="QFrame" name="line_shoulder_pos_l">
