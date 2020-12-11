@@ -220,6 +220,42 @@ background-color:qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5,
       </property>
       <widget class="QWidget" name="splash_screen">
        <layout class="QGridLayout" name="gridLayout_3">
+        <item row="2" column="0">
+         <widget class="QProgressBar" name="prog_loading">
+          <property name="styleSheet">
+           <string notr="true">QProgressBar:horizontal {
+border-radius: 3px;
+background: black;
+padding: 1px;
+}
+QProgressBar::chunk:horizontal {
+background: qlineargradient(x1: 0, y1: 0.5, x2: 1, y2: 0.5, stop: 0 rgba(152, 220,232, 155), stop: 1 rgba(152, 220,232, 255));
+}</string>
+          </property>
+          <property name="value">
+           <number>24</number>
+          </property>
+          <property name="textVisible">
+           <bool>false</bool>
+          </property>
+          <property name="invertedAppearance">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QGraphicsView" name="gv_image">
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0">
          <widget class="QFrame" name="frame_14">
           <property name="sizePolicy">
@@ -265,42 +301,6 @@ background-color:qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5,
             </widget>
            </item>
           </layout>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QGraphicsView" name="gv_image">
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Plain</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QProgressBar" name="prog_loading">
-          <property name="styleSheet">
-           <string notr="true">QProgressBar:horizontal {
-border-radius: 3px;
-background: black;
-padding: 1px;
-}
-QProgressBar::chunk:horizontal {
-background: qlineargradient(x1: 0, y1: 0.5, x2: 1, y2: 0.5, stop: 0 rgba(152, 220,232, 155), stop: 1 rgba(152, 220,232, 255));
-}</string>
-          </property>
-          <property name="value">
-           <number>24</number>
-          </property>
-          <property name="textVisible">
-           <bool>false</bool>
-          </property>
-          <property name="invertedAppearance">
-           <bool>false</bool>
-          </property>
          </widget>
         </item>
        </layout>
@@ -788,7 +788,7 @@ border-image-repeat : stretch;
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_6">
          <item>
-          <widget class="QLabel" name="scan_dwnld_label">
+          <widget class="QLabel" name="label_2">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -877,7 +877,7 @@ color:rgba(15, 220, 232,255);
          </item>
         </layout>
        </widget>
-       <widget class="QPushButton" name="scan_auth_btn_test">
+       <widget class="QPushButton" name="btn_test">
         <property name="geometry">
          <rect>
           <x>140</x>
@@ -913,7 +913,7 @@ color:rgba(15, 220, 232,255);
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <item>
-          <widget class="QLabel" name="scan_auth_label">
+          <widget class="QLabel" name="label_3">
            <property name="font">
             <font>
              <family>Segoe UI</family>
@@ -1003,7 +1003,7 @@ color:rgba(15, 220, 232,255);
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_8">
          <item>
-          <widget class="QLabel" name="scan_screen_label">
+          <widget class="QLabel" name="label_4">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1086,7 +1086,7 @@ color:rgba(15, 220, 232,255);
          </item>
         </layout>
        </widget>
-       <widget class="QPushButton" name="scan_check_btn_test">
+       <widget class="QPushButton" name="btn_test_2">
         <property name="geometry">
          <rect>
           <x>200</x>
@@ -1134,7 +1134,7 @@ color:rgba(15, 220, 232,255);
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="pati_info_label">
+           <widget class="QLabel" name="label_5">
             <property name="font">
              <font>
               <family>Segoe UI</family>
@@ -1361,7 +1361,7 @@ color:rgba(15, 220, 232,255);
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="new_pati_info_label">
+           <widget class="QLabel" name="label_6">
             <property name="font">
              <font>
               <family>Segoe UI</family>
@@ -1681,9 +1681,9 @@ color:rgba(15, 220, 232,255);
         <property name="geometry">
          <rect>
           <x>320</x>
-          <y>560</y>
+          <y>540</y>
           <width>441</width>
-          <height>141</height>
+          <height>181</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -1707,7 +1707,7 @@ color:rgba(15, 220, 232,255);
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>-30</y>
+           <y>0</y>
            <width>201</width>
            <height>101</height>
           </rect>
@@ -1735,9 +1735,9 @@ color:rgba(15, 220, 232,255);
         <property name="geometry">
          <rect>
           <x>840</x>
-          <y>560</y>
+          <y>540</y>
           <width>441</width>
-          <height>141</height>
+          <height>181</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -1760,8 +1760,8 @@ color:rgba(15, 220, 232,255);
          </property>
          <property name="geometry">
           <rect>
-           <x>280</x>
-           <y>-30</y>
+           <x>260</x>
+           <y>0</y>
            <width>201</width>
            <height>101</height>
           </rect>
@@ -1814,7 +1814,7 @@ color:rgba(15, 220, 232,255);
          </property>
          <property name="geometry">
           <rect>
-           <x>160</x>
+           <x>190</x>
            <y>10</y>
            <width>321</width>
            <height>61</height>
@@ -1914,7 +1914,7 @@ color:rgba(15, 220, 232,255);
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="slct_trmt_area_label">
+          <widget class="QLabel" name="label_7">
            <property name="font">
             <font>
              <family>Segoe UI</family>
@@ -2135,7 +2135,7 @@ color:rgba(15, 220, 232,255);
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="pos_electrode_label">
+          <widget class="QLabel" name="label_8">
            <property name="font">
             <font>
              <family>Segoe UI</family>
@@ -2364,7 +2364,7 @@ color:rgba(15, 220, 232,255);
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
             <item>
-             <widget class="QLabel" name="applicator_a_label">
+             <widget class="QLabel" name="label_9">
               <property name="font">
                <font>
                 <family>Segoe UI</family>
@@ -2655,7 +2655,7 @@ border-image: url(./images/frame11.png);
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_11">
             <item>
-             <widget class="QLabel" name="applicator_b_label">
+             <widget class="QLabel" name="label_10">
               <property name="font">
                <font>
                 <family>Segoe UI</family>
@@ -2836,7 +2836,7 @@ margin-bottom: -8px;
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="timer_label">
+          <widget class="QLabel" name="label_11">
            <property name="font">
             <font>
              <family>Segoe UI</family>
@@ -2960,7 +2960,7 @@ margin-bottom: -8px;
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
-          <widget class="QLabel" name="settings_label">
+          <widget class="QLabel" name="label_15">
            <property name="geometry">
             <rect>
              <x>0</x>
@@ -3205,7 +3205,7 @@ color: rgb(3, 238, 241);</string>
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
-          <widget class="QLabel" name="select_lang_label">
+          <widget class="QLabel" name="label_12">
            <property name="geometry">
             <rect>
              <x>0</x>
@@ -3251,7 +3251,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0.460227, x2:1, y2:0.466, sto
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <widget class="QComboBox" name="lang_combo">
+           <widget class="QComboBox" name="comboBox">
             <property name="geometry">
              <rect>
               <x>80</x>
@@ -3269,6 +3269,46 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0.460227, x2:1, y2:0.466, sto
              <string notr="true">color: rgb(3, 250, 253);
 background-color: rgb(0, 94, 113);</string>
             </property>
+            <item>
+             <property name="text">
+              <string>English</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Español</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Netherlands</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Italiano</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Français</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>中文</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>日本人</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>한국어</string>
+             </property>
+            </item>
            </widget>
           </widget>
           <widget class="QPushButton" name="btn_ok_language">
@@ -3370,7 +3410,7 @@ border-image: url(./images/frame11.png);
            <property name="frameShadow">
             <enum>QFrame::Plain</enum>
            </property>
-           <widget class="QLabel" name="choose_nw_label">
+           <widget class="QLabel" name="label_17">
             <property name="geometry">
              <rect>
               <x>0</x>
@@ -3525,7 +3565,7 @@ border-image: url(./images/frame11.png);
              <enum>QLineEdit::Password</enum>
             </property>
            </widget>
-           <widget class="QLabel" name="inp_pass_label">
+           <widget class="QLabel" name="label_19">
             <property name="geometry">
              <rect>
               <x>0</x>
@@ -3743,7 +3783,7 @@ color: rgb(3, 250, 253);</string>
             <set>Qt::AlignCenter</set>
            </property>
           </widget>
-          <widget class="QLabel" name="net_conn_label">
+          <widget class="QLabel" name="label_14">
            <property name="geometry">
             <rect>
              <x>10</x>
