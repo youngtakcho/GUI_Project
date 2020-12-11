@@ -571,9 +571,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.btn_no.setText(QtWidgets.QApplication.translate('Test','No'))
         
         self.slct_trmt_area_label.setText(QtWidgets.QApplication.translate('Test','Select Treatment Area'))
-        self.txt_shoulder.setText(QtWidgets.QApplication.translate('Test','Shoulder'))
-        self.txt_arm.setText(QtWidgets.QApplication.translate('Test','Arm'))
-        self.txt_thigh.setText(QtWidgets.QApplication.translate('Test','Thigh'))
+        # self.txt_arm.setText(QtWidgets.QApplication.translate('Test','Arm'))
+        # self.txt_thigh.setText(QtWidgets.QApplication.translate('Test','Thigh'))
 
         self.pos_electrode_label.setText(QtWidgets.QApplication.translate('Test','Position Electrodes'))
         self.txt_shoulder_pos_l.setText(QtWidgets.QApplication.translate('Test','Shoulder'))
