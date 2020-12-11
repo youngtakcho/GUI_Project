@@ -15,7 +15,6 @@ from numpy import ndarray
 import numpy as np
 from backend import *
 
-
 class MainWindow(QtWidgets.QMainWindow):
     screen_changed_stack = []
 
@@ -24,6 +23,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.screens = {}
         uic.loadUi(STRING_UI_FILE_MAIN_WINDOW, self)
         self.init_screens_dic()
+        self.trans = QtCore.QTranslator(self)
         self.timer_counter = TIMER_START_VALUE # for test
         """register page changing signals"""
         self.stck_wnd.currentChanged.connect(self.page_changed)
@@ -45,7 +45,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_graphic(self.selected_sex)
         # self.btn_test_male_pos_clicked(True)
         self.qr_dic = {}
+        
+        options = ([('English', ''), ('Español','eng-esp'), ('Netherlands','eng-dut'), ('Italiano','eng-ita'), ('français', 'eng-fr' ), ('中文', 'eng-chs'), ('日本人','eng-jap'), ('한국어','eng-kor'), ])
+        for i, (text, lang) in enumerate(options):
+            self.lang_combo.addItem(text)
+            self.lang_combo.setItemData(i, lang)
+        self.retranslateUi()
 
+        self.lang_combo.currentIndexChanged.connect(self.change_func)
 
     def init_screens_dic(self):
         SCREENS = [
@@ -166,8 +173,8 @@ class MainWindow(QtWidgets.QMainWindow):
     # for auth qrcode screen
     def init_qrcode_screens(self):
         """set test button for QRcode screens"""
-        self.btn_test.released.connect(self.btn_next_released)
-        self.btn_test_2.released.connect(self.btn_next_released)
+        self.scan_auth_btn_test.released.connect(self.btn_next_released)
+        self.scan_check_btn_test.released.connect(self.btn_next_released)
 
     @pyqtSlot(bool,int,ndarray)
     def auth_qrcode_received(self,is_success,qrcode_id,image):
@@ -491,6 +498,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def btn_ok_language_released(self):
+        #self.change_func()
         self.stck_wnd.setCurrentIndex(self.screens[ID_SETTING_SCREEN])
 
 
@@ -538,19 +546,78 @@ class MainWindow(QtWidgets.QMainWindow):
         dialog.setGeometry(rw,rh,dialog.width(),dialog.height())
         dialog.open()
 
-    # def show_connecting_dialog(self):
-    #     dialog = QtWidgets.QDialog(self)
-    #     uic.loadUi(STRING_UI_FILE_CONNECTING,dialog)
-    #     dialog.setModal(True);
-    #     dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
-    #     w = self.geometry().width()
-    #     h = self.geometry().height()
-    #     dw = dialog.geometry().width()
-    #     dh = dialog.geometry().height()
-    #     rw = w/2 - dw/2
-    #     rh = h/2 - dh/2 -5
-    #     dialog.setGeometry(rw,rh,dialog.width(),dialog.height())
-    #     dialog.show()
+    def retranslateUi(self):
+        self.btn_btmbar_back.setText(QtWidgets.QApplication.translate('Test','Back'))
+        self.btn_btmbar_next.setText(QtWidgets.QApplication.translate('Test','Next'))
+
+        self.label_welcom.setText(QtWidgets.QApplication.translate('Test','Welcome to UTA'))
+        self.lbl_login_title.setText(QtWidgets.QApplication.translate('Test','Practice Login'))
+        self.lbl_username.setText(QtWidgets.QApplication.translate('Test','User Name'))
+        self.lbl_password.setText(QtWidgets.QApplication.translate('Test','Password'))
+        self.btn_login.setText(QtWidgets.QApplication.translate('Test','Login'))
+        
+        self.scan_auth_label.setText(QtWidgets.QApplication.translate('Test','Scan to Authenticate'))
+        self.scan_dwnld_label.setText(QtWidgets.QApplication.translate('Test','Scan to download app'))
+        self.scan_auth_btn_test.setText(QtWidgets.QApplication.translate('Test','TEST BUTTON'))
+        
+        self.scan_screen_label.setText(QtWidgets.QApplication.translate('Test','Scan to Check'))
+        self.scan_check_btn_test.setText(QtWidgets.QApplication.translate('Test','TEST BUTTON'))
+        
+        self.pati_info_label.setText(QtWidgets.QApplication.translate('Test','Patient Information'))
+        self.btn_female.setText(QtWidgets.QApplication.translate('Test','Female'))
+        self.btn_male.setText(QtWidgets.QApplication.translate('Test','Male'))
+        self.new_pati_info_label.setText(QtWidgets.QApplication.translate('Test','New patient?'))
+        self.btn_yes.setText(QtWidgets.QApplication.translate('Test','Yes'))
+        self.btn_no.setText(QtWidgets.QApplication.translate('Test','No'))
+        
+        self.slct_trmt_area_label.setText(QtWidgets.QApplication.translate('Test','Select Treatment Area'))
+        self.txt_shoulder.setText(QtWidgets.QApplication.translate('Test','Shoulder'))
+        self.txt_arm.setText(QtWidgets.QApplication.translate('Test','Arm'))
+        self.txt_thigh.setText(QtWidgets.QApplication.translate('Test','Thigh'))
+
+        self.pos_electrode_label.setText(QtWidgets.QApplication.translate('Test','Position Electrodes'))
+        self.txt_shoulder_pos_l.setText(QtWidgets.QApplication.translate('Test','Shoulder'))
+        self.txt_shoulder_pos_r.setText(QtWidgets.QApplication.translate('Test','Shoulder'))
+
+        self.timer_label.setText(QtWidgets.QApplication.translate('Test','Timer'))
+        self.applicator_a_label.setText(QtWidgets.QApplication.translate('Test','Applicator A'))
+        self.applicator_b_label.setText(QtWidgets.QApplication.translate('Test','Applicator B'))
+        self.btn_timer_stop.setText(QtWidgets.QApplication.translate('Test','STOP'))
+
+        self.settings_label.setText(QtWidgets.QApplication.translate('Test','SETTINGS'))
+        self.btn_restore_default.setText(QtWidgets.QApplication.translate('Test','RESTORE DEFAULTS'))
+        self.btn_language.setText(QtWidgets.QApplication.translate('Test','LANGUAGE'))
+        self.btn_system_info.setText(QtWidgets.QApplication.translate('Test','SYSTEM INFO'))
+        self.btn_advanced_services.setText(QtWidgets.QApplication.translate('Test','ADVANCED SERVICES'))
+        self.btn_internet.setText(QtWidgets.QApplication.translate('Test','INTERNET'))
+        self.btn_others.setText(QtWidgets.QApplication.translate('Test','OTHERS'))
+
+        self.select_lang_label.setText(QtWidgets.QApplication.translate('Test','Select Your Language'))
+        self.btn_ok_language.setText(QtWidgets.QApplication.translate('Test','OK'))
+
+        self.choose_nw_label.setText(QtWidgets.QApplication.translate('Test','Choose a network'))
+        self.btn_wifi_search.setText(QtWidgets.QApplication.translate('Test','SEARCH'))
+
+        self.inp_pass_label.setText(QtWidgets.QApplication.translate('Test','Input Password'))
+        self.btn_cancel_wifi_passwd.setText(QtWidgets.QApplication.translate('Test','CANCEL'))
+        self.btn_ok_wifi_passwd.setText(QtWidgets.QApplication.translate('Test','OK'))
+
+        self.net_conn_label.setText(QtWidgets.QApplication.translate('Test','NETWORK CONNECTED'))
+        self.btn_net_conn_ok.setText(QtWidgets.QApplication.translate('Test','OK'))
+
+    @QtCore.pyqtSlot(int)
+    def change_func(self, index):
+        data = self.lang_combo.itemData(index)
+        if data:
+            self.trans.load(data)
+            QtWidgets.QApplication.instance().installTranslator(self.trans)
+        else:
+            QtWidgets.QApplication.instance().removeTranslator(self.trans)
+
+    def changeEvent(self, event):
+        if event.type() == QtCore.QEvent.LanguageChange:
+            self.retranslateUi()
+        super(MainWindow, self).changeEvent(event)
 
 # dialog for general message
     def show_dialog_with_message(self,msg):
