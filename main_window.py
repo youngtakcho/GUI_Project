@@ -40,7 +40,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.register_bottombar_button_signals()
         self.init_patient_information_screen()
         self.init_select_treatment_area()
-        self.init_position_electrodes_screen()
+        # self.init_position_electrodes_screen()
         self.init_timer_screen()
         self.init_setting_pages()
 
@@ -194,12 +194,20 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.dialog_on_screen is not None:
             self.dialog_on_screen.close()
         if result:
-            QtCore.QTimer.singleShot(SEC_AUTO_DIALOG_CLOSE,self.close_dialog_go_next)
+            # QtCore.QTimer.singleShot(SEC_AUTO_DIALOG_CLOSE,self.close_dialog_go_next)
+            QtCore.QTimer.singleShot(SEC_AUTO_DIALOG_CLOSE,self.ready_for_hardware)
             self.show_dialog_with_html_message(html)
         else:
             self.show_dialog_with_message_unk_error(UNKNOWN_ERROR)
             self.reset_values()
             QtCore.QTimer.singleShot(SEC_AUTO_DIALOG_CLOSE,self.go_to_start_screen)
+
+    def ready_for_hardware(self):
+        self.close_current_dialog()
+        t = WaitHardwarePreparation(parent=self)
+        t.hardware_msg_received.connect(self.hardware_msg_received)
+        t.start()
+        self.show_loading_dialog_with_message("""Treatment will be started.\nPlease wait for Hardware to be ready""")
 
     def close_dialog_go_next(self):
         self.dialog_on_screen.close()
@@ -294,14 +302,40 @@ class MainWindow(QtWidgets.QMainWindow):
         self.line_thigh_L.hide()
         self.line_arm_R.hide()
         self.line_thigh_R.hide()
+        self.txt_label_list = [self.txt_shoulder_L,self.txt_shoulder_R,self.txt_arm_L,self.txt_arm_R,self.txt_thigh_L,self.txt_thigh_R]
+        for label in self.txt_label_list:
+            label.selected.connect(self.check_select_limit)
+
+    def check_select_limit(self):
+        count = 0
+        for label in self.txt_label_list:
+            if label.isSelected():
+                count += 1
+        if count >= 2:
+            for label in self.txt_label_list:
+                if not label.isSelected():
+                    label.setEnabled(False)
+                else:
+                    label.setEnabled(True)
+        else:
+            for label in self.txt_label_list:
+                label.setEnabled(True)
 
     # for position electrodes screen
     def init_position_electrodes_screen(self):
         """for Position Electrodes screen"""
-        self.line_shoulder_pos_l.hide()
-        self.line_shoulder_pos_r.hide()
-        self.txt_shoulder_pos_r.hide()
-        self.txt_shoulder_pos_r.hide()
+        pos_frame_list = [self.line_shoulder_pos_l,self.line_shoulder_pos_r,self.frame_arm_L_2,self.frame_arm_R_2,self.frame_thigh_L_2,self.frame_thigh_R_2]
+        pos_label_list = [self.txt_shoulder_pos_l,self.txt_shoulder_pos_r,self.txt_arm_L_2,self.txt_arm_R_2,self.txt_thigh_L_2,self.txt_thigh_R_2]
+        list_area = []
+        for i in range(0,len(self.txt_label_list)):
+            pos_label_list[i].setSelected(True)
+            if self.txt_label_list[i].isSelected():
+                pos_frame_list[i].show()
+                list_area.append(i)
+            else:
+                pos_frame_list[i].hide()
+        updateLocation(list_area)
+
 
     # for timer screen
     def init_timer_screen(self):
@@ -324,6 +358,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.device_timer.setInterval(TIMER_INTERVAL_IN_MSEC)
             self.device_timer.timeout.connect(self.timer_process)
             self.device_timer.start()
+            startTreatment()
 
     @pyqtSlot(int)
     def slider_b_changed(self,value):
@@ -335,6 +370,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.device_timer.setInterval(TIMER_INTERVAL_IN_MSEC)
             self.device_timer.timeout.connect(self.timer_process)
             self.device_timer.start()
+            startTreatment()
 
     @pyqtSlot()
     def timer_process(self):
@@ -346,7 +382,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.set_lock_gui_btns_timer(False)
             self.goto_AuthScreen()
             self.btn_stop_timer_released()
+            finishTreatment()
         self.display_timer()
+
 
     @pyqtSlot()
     def btn_timer_lock_released(self):
@@ -388,10 +426,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.bottom_bar_conrtol(page_number)
         if page_number == self.screens[ID_TIMER_SCREEN]:
             self.display_timer()
-            t = WaitHardwarePreparation(parent=self)
-            t.hardware_msg_received.connect(self.hardware_msg_received)
-            t.start()
-            self.show_loading_dialog_with_message("""Treatment will be started.\nPlease wait for Hardware to be ready""")
+            # t = WaitHardwarePreparation(parent=self)
+            # t.hardware_msg_received.connect(self.hardware_msg_received)
+            # t.start()
+            # self.show_loading_dialog_with_message("""Treatment will be started.\nPlease wait for Hardware to be ready""")
+        elif page_number == self.screens[ID_POS_SCREEN]:
+            self.init_position_electrodes_screen()
+        # elif page_number == self.screens[ID_PAIT_INFO_SCREEN]:
+        #     t = WaitHardwarePreparation(parent=self)
+        #     t.hardware_msg_received.connect(self.hardware_msg_received)
+        #     t.start()
+        #     self.show_loading_dialog_with_message("""Treatment will be started.\nPlease wait for Hardware to be ready""")
 
     @pyqtSlot(bool,str)
     def hardware_msg_received(self, is_ready, msg):
@@ -399,6 +444,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.close_current_dialog()
         if is_ready:
             self.show_dialog_with_message("Hardware is ready!")
+            self.btn_next_released()
         else:
             self.show_dialog_with_message("Hardware Error\nGo to Authentication Screen")
             self.goto_AuthScreen()
@@ -803,7 +849,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.scene_patient.addPixmap(self.image_patient)
         self.gv_humanbody.setScene(self.scene_patient)
         self.gv_humanbody.setRenderHint(QtGui.QPainter.Antialiasing)
-        txt_label_list = [self.txt_shoulder_L,self.txt_shoulder_R,self.txt_arm_R,self.txt_arm_L,self.txt_thigh_R,self.txt_thigh_L]
+
 
         # for lbl in txt_label_list:
         #     lbl.setStyleSheet(STR_COLOR_STYLE_FOR_LABEL%(FONT_COLOR_DISABLED_R,FONT_COLOR_DISABLED_G,FONT_COLOR_DISABLED_B))

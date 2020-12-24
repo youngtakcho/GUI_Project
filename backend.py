@@ -150,7 +150,7 @@ class WaitHardwarePreparation(QtCore.QThread):
         self.to_serer_msg = request_msg
 
     def run(self) -> None:
-        self.sleep(2)
+        self.sleep(5)
         str_ = """Fail to init"""
         self.hardware_msg_received.emit(True,str_)
 

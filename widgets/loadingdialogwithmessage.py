@@ -18,4 +18,6 @@ class LoadingDialogWithMessage(QtWidgets.QDialog):
 
     def setMessage(self,msg):
         self.lbl_msg.setText(msg)
+        self.lbl_msg:QtWidgets.QLabel
+        self.lbl_msg.setAlignment(QtCore.Qt.AlignCenter)
 

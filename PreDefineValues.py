@@ -76,7 +76,7 @@ BottomBar_showing_info   =   [ ## Back, Next
     (False,False),## for "login_screen"
     (False,False),## for "auth_screen"
     # (False,False),## for "scan_screen"
-    ( True, True),## for "pait_info_screen"
+    ( True, False),## for "pait_info_screen"
     ( True, True),## for "slct_trt_screen"
     ( True, True),## for "pos_screen"
     (False,False),## for "timer_screen"

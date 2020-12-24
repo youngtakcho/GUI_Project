@@ -4,6 +4,7 @@ from AnimationShadowEffect import AnimationShadowEffect
 from PreDefineValues import *
 
 class GlowLabel(QtWidgets.QLabel):
+    selected = QtCore.pyqtSignal()
     def __init__(self, *args, **kwargs):
         super(GlowLabel, self).__init__(*args, **kwargs)
         self.effect = AnimationShadowEffect(QtGui.QColor(GLOWING_EFFECT_COLOR_R,GLOWING_EFFECT_COLOR_G,GLOWING_EFFECT_COLOR_B),parent=self)
@@ -31,11 +32,13 @@ class GlowLabel(QtWidgets.QLabel):
         self.setStyleSheet(".GlowLabel{\ncolor:rgb(%d,%d,%d);\n}\n"%color)
 
     def event(self, e: QtCore.QEvent) -> bool:
-        if e.type() == QtCore.QEvent.TouchEnd:
-            print("touch end!")
-            return False
-        elif e.type() == QtCore.QEvent.MouseButtonRelease:
+        if not self.isEnabled():
+            return super(GlowLabel, self).event(e)
+        if e.type() == QtCore.QEvent.MouseButtonRelease:
             self.setSelected(not self.is_selected)
-            print("Touched")
+            self.selected.emit()
             return False
         return super(GlowLabel, self).event(e)
+
+    def isSelected(self):
+        return self.is_selected

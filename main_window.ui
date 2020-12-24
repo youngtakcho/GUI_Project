@@ -2539,7 +2539,7 @@ color:rgb(80,80,80);
         <property name="midLineWidth">
          <number>0</number>
         </property>
-        <widget class="GlowLabel" name="txt_arm_R_3">
+        <widget class="GlowLabel" name="txt_arm_R_2">
          <property name="enabled">
           <bool>true</bool>
          </property>
