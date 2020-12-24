@@ -1,10 +1,10 @@
 from PyQt5 import QtCore, QtWidgets, QtGui, uic
 from PyQt5.QtCore import pyqtSlot
 from PreDefineValues import STRING_UI_FILE_LOADING
-from PreDefineValues import IMAGE_FOR_WIFI_CONN
+from PreDefineValues import IMAGE_FOR_LOADING
 
 
-class WifiLoadingDialogWithMessage(QtWidgets.QDialog):
+class LoadingDialogWithMessage_server(QtWidgets.QDialog):
     def __init__(self, parent, data):
         QtWidgets.QDialog.__init__(self,parent)
         uic.loadUi(STRING_UI_FILE_LOADING , self)
@@ -12,8 +12,8 @@ class WifiLoadingDialogWithMessage(QtWidgets.QDialog):
         self.lbl_msg:QtWidgets.QLabel
         self.data = data
         self.trans = QtCore.QTranslator(self)
-        
-        self.loading_movie = QtGui.QMovie(IMAGE_FOR_WIFI_CONN)
+
+        self.loading_movie = QtGui.QMovie(IMAGE_FOR_LOADING)
         self.loading_movie.setScaledSize(QtCore.QSize(self.lbl_loading_gif.width(),self.lbl_loading_gif.height()))
         self.lbl_loading_gif.setMovie(self.loading_movie)
         self.lbl_loading_gif.setAttribute(QtCore.Qt.WA_NoSystemBackground)
@@ -28,11 +28,10 @@ class WifiLoadingDialogWithMessage(QtWidgets.QDialog):
         self.lbl_msg.setText(msg)
 
     def retranslateUi(self):
-        self.lbl_msg.setText(QtWidgets.QApplication.translate('wifi-dialog',"Connecting...."))
+        self.lbl_msg.setText(QtWidgets.QApplication.translate('load-server',"Receiving Data from Server"))
 
     def changeEvent(self, event):
         if event.type() == QtCore.QEvent.LanguageChange:
             self.retranslateUi()
-        super(WifiLoadingDialogWithMessage, self).changeEvent(event)
-
+        super(LoadingDialogWithMessage_server, self).changeEvent(event)
 

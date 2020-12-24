@@ -10,6 +10,10 @@ import time
 import socket
 from widgets.loadingdialogwithmessage import LoadingDialogWithMessage
 from widgets.wifiloadingdialogmsg import WifiLoadingDialogWithMessage
+from widgets.loadingdialogwithmessage_login import LoadingDialogWithMessage_login
+from widgets.loadingdialogwithmessage_server import LoadingDialogWithMessage_server
+from widgets.loadingdialogwithmessage_qr import LoadingDialogWithMessage_qr
+from AnimationShadowEffect import AnimationShadowEffect
 
 from numpy import ndarray
 import numpy as np
@@ -46,31 +50,16 @@ class MainWindow(QtWidgets.QMainWindow):
         # self.btn_test_male_pos_clicked(True)
         self.qr_dic = {}
         
-        options = ([('English', ''), ('Español','eng-esp'), ('Netherlands','eng-dut'), ('Italiano','eng-ita'), ('français', 'eng-fr' ), ('中文', 'eng-chs'), ('日本人','eng-jap'), ('한국어','eng-kor'), ])
+        options = ([('English', 'eng-eng'), ('Español','eng-esp'), ('Netherlands','eng-dut'), ('Italiano','eng-ita'), ('français', 'eng-fr' ), ('中文', 'eng-chs'), ('日本人','eng-jap'), ('한국어','eng-kor'), ])
         for i, (text, lang) in enumerate(options):
             self.lang_combo.addItem(text)
             self.lang_combo.setItemData(i, lang)
         self.retranslateUi()
 
         self.lang_combo.currentIndexChanged.connect(self.change_func)
+        self.langfile = 'eng-eng'
 
     def init_screens_dic(self):
-        SCREENS = [
-            ID_SPLASH_SCREEN,
-            ID_LOGIN_SCREEN,
-            ID_AUTH_SCREEN,
-            ID_SCAN_SCREEN,
-            ID_PAIT_INFO_SCREEN,
-            ID_SLCT_TRT_SCREEN,
-            ID_POS_SCREEN,
-            ID_TIMER_SCREEN,
-            ID_SETTING_SCREEN,
-            ID_SELECT_LANG_SCREEN,
-            ID_WIFI_SELECT_SCREEN,
-            ID_WIFI_PASSWD_SCREEN,
-            ID_NET_CNT_SCREEN
-        ]
-
         counter = 0
         for item in SCREENS:
             self.screens[item] = counter
@@ -85,8 +74,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def btn_back_released(self):
-        print(self.screen_changed_stack.pop(),self.screens)
-        self.stck_wnd.setCurrentIndex(self.stck_wnd.currentIndex()-1)
+        self.screen_changed_stack.pop()
+        move_to = self.screen_changed_stack.pop()
+        self.stck_wnd.setCurrentIndex(move_to)
 
     @pyqtSlot()
     def btn_next_released(self):
@@ -106,10 +96,10 @@ class MainWindow(QtWidgets.QMainWindow):
         id = self.txtedit_username.text()
         passwd= self.txtedit_passwd.text()
 
-        loginthread = LoginAttemptThread(self,(id,passwd))
+        loginthread = LoginAttemptThread(self,id_pass=(id,passwd))
         loginthread.login_result.connect(self.login_results)
         loginthread.start()
-        self.show_loading_dialog_with_message(STRING_LOGIN_ON_PROCESSING)
+        self.show_loading_dialog_with_message_login(STRING_LOGIN_ON_PROCESSING)
 
     @pyqtSlot(bool,str)
     def login_results(self,is_success,msg_from_server):
@@ -120,7 +110,7 @@ class MainWindow(QtWidgets.QMainWindow):
             thread = RequestQrCodeImage(self, address=("", 8080), request_msg="request=QR_AUTH")
             thread.imageReceived.connect(self.auth_qrcode_received)
             thread.start()
-            self.show_loading_dialog_with_message(STRING_RECEIVING_FROM_SERVER)
+            self.show_loading_dialog_with_message_server(STRING_RECEIVING_FROM_SERVER)
 
     @pyqtSlot()
     def id_lineedit_has_focus(self):
@@ -131,9 +121,11 @@ class MainWindow(QtWidgets.QMainWindow):
         dialog = QtWidgets.QDialog(self)
         uic.loadUi(STRING_UI_FILE_LOGIN_FAIL,dialog)
         if result:
-            dialog.txt_msg.setText(STRING_LOGIN_SUCCESS)
+            dialog.txt_msg.setText(QtWidgets.QApplication.translate('login-success','\nLogin Success!\n'))
+            dialog.btn_ok.setText(QtWidgets.QApplication.translate('login-success','OK'))
         else:
-            dialog.txt_msg.setText(STRING_LOGIN_FAIL)
+            dialog.txt_msg.setText(QtWidgets.QApplication.translate('login-fail','\nId or password is incorrect    \nPlease Check\n'))
+            dialog.btn_ok.setText(QtWidgets.QApplication.translate('login-success','OK'))
         dialog.setModal(True)
         dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
         self.positing_dialog_on_center(dialog)
@@ -156,7 +148,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.image = QtGui.QPixmap("images/logo2.png")
         self.image = self.image.scaledToWidth(500)
         scene.addPixmap(self.image)
-        gv:QtWidgets.QGraphicsView = self.gv_image
+        gv = self.gv_image
         gv.setScene(scene)
         gv.setStyleSheet("background-color: transparent;")
         self.scene = scene
@@ -187,28 +179,38 @@ class MainWindow(QtWidgets.QMainWindow):
             thread.start()
         else:
             self.close_current_dialog()
-            self.show_dialog_with_message(STRING_ERROR_RECEIVING_QRCODE)
+            self.show_dialog_with_message_qr_msg(STRING_ERROR_RECEIVING_QRCODE)
             self.reset_values()
             self.go_to_start_screen()
+
+    def goto_AuthScreen(self):
+        self.stck_wnd.setCurrentIndex(self.screens[ID_AUTH_SCREEN])
+        thread = WaitForServerAuthWithQR(self)
+        thread.authenticatedReceived.connect(self.authenticated_received_from_server)
+        thread.start()
 
     @pyqtSlot(bool,str)
     def authenticated_received_from_server(self,result,html):
         if self.dialog_on_screen is not None:
             self.dialog_on_screen.close()
         if result:
-            QtCore.QTimer.singleShot(3000,self.request_scan_qr_code)
+            QtCore.QTimer.singleShot(SEC_AUTO_DIALOG_CLOSE,self.close_dialog_go_next)
             self.show_dialog_with_html_message(html)
         else:
-            self.show_dialog_with_message(UNKNOWN_ERROR)
+            self.show_dialog_with_message_unk_error(UNKNOWN_ERROR)
             self.reset_values()
-            QtCore.QTimer.singleShot(3000,self.go_to_start_screen)
+            QtCore.QTimer.singleShot(SEC_AUTO_DIALOG_CLOSE,self.go_to_start_screen)
+
+    def close_dialog_go_next(self):
+        self.dialog_on_screen.close()
+        self.btn_next_released()
 
     def request_scan_qr_code(self):
         self.dialog_on_screen.close()
         thread = RequestQrCodeImage(self)
         thread.imageReceived.connect(self.scan_qrcode_received)
         thread.start()
-        self.show_loading_dialog_with_message(STRING_RECV_QR_SCAN_FROM_SERVER)
+        self.show_loading_dialog_with_message_qr(STRING_RECV_QR_SCAN_FROM_SERVER)
 
     @pyqtSlot(bool,int,ndarray)
     def scan_qrcode_received(self,is_success,qrcode_id,image):
@@ -221,7 +223,7 @@ class MainWindow(QtWidgets.QMainWindow):
             thread.start()
         else:
             self.close_current_dialog()
-            self.show_dialog_with_message(STRING_ERROR_RECEIVING_QRCODE)
+            self.show_dialog_with_message_qr_msg(STRING_ERROR_RECEIVING_QRCODE)
             self.reset_values()
             self.go_to_start_screen()
 
@@ -229,10 +231,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def scan_done(self,is_success,msg):
         print(msg)
         if is_success:
-            self.show_dialog_with_message(STRING_SCAN_QRCODE_SUCCESS)
+            self.show_dialog_with_message_qr_success(STRING_SCAN_QRCODE_SUCCESS)
             self.btn_next_released()
         else:
-            self.show_dialog_with_message(STRING_SCAN_QRCODE_FAIL)
+            self.show_dialog_with_message_qr_fail(STRING_SCAN_QRCODE_FAIL)
 
     def close_dialog_and_proceed_next(self):
         self.dialog_on_screen.close()
@@ -305,11 +307,12 @@ class MainWindow(QtWidgets.QMainWindow):
     def init_timer_screen(self):
         """for Timer Screen"""
         self.btn_timer_stop.released.connect(self.btn_stop_timer_released)
-        self.btn_timer_stop.hide()
+        # self.btn_timer_stop.hide()
         self.lcd_timer.display("00:00:00")
         self.slider_a.valueChanged.connect(self.slider_a_changed)
         self.slider_b.valueChanged.connect(self.slider_b_changed)
         self.device_timer = None  # timer is killed initially
+        self.btn_timer_lock.released.connect(self.btn_timer_lock_released)
 
     @pyqtSlot(int)
     def slider_a_changed(self,value):
@@ -338,10 +341,26 @@ class MainWindow(QtWidgets.QMainWindow):
         self.timer_counter -= 1
         if self.timer_counter <= 0:
             #add designed dialog when dialog design is complite
-            self.show_dialog_with_message(STRING_TREATMENT_DONE)
-            self.stck_wnd.setCurrentIndex(self.screens[ID_SCAN_SCREEN])
+            self.show_dialog_with_message_trmt_done(STRING_TREATMENT_DONE)
+            if not self.btn_timer_stop.isEnabled():
+                self.set_lock_gui_btns_timer(False)
+            self.goto_AuthScreen()
             self.btn_stop_timer_released()
         self.display_timer()
+
+    @pyqtSlot()
+    def btn_timer_lock_released(self):
+        self.set_lock_gui_btns_timer(self.btn_timer_stop.isEnabled())
+
+    def set_lock_gui_btns_timer(self,is_lock):
+        if is_lock:
+            self.btn_timer_stop.setEnabled(False)
+            self.slider_b.setEnabled(False)
+            self.slider_a.setEnabled(False)
+        else:
+            self.btn_timer_stop.setEnabled(True)
+            self.slider_b.setEnabled(True)
+            self.slider_a.setEnabled(True)
 
     def display_timer(self):
         HH = int(self.timer_counter / 3600)
@@ -369,6 +388,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self.bottom_bar_conrtol(page_number)
         if page_number == self.screens[ID_TIMER_SCREEN]:
             self.display_timer()
+            t = WaitHardwarePreparation(parent=self)
+            t.hardware_msg_received.connect(self.hardware_msg_received)
+            t.start()
+            self.show_loading_dialog_with_message("""Treatment will be started.\nPlease wait for Hardware to be ready""")
+
+    @pyqtSlot(bool,str)
+    def hardware_msg_received(self, is_ready, msg):
+        print(msg)
+        self.close_current_dialog()
+        if is_ready:
+            self.show_dialog_with_message("Hardware is ready!")
+        else:
+            self.show_dialog_with_message("Hardware Error\nGo to Authentication Screen")
+            self.goto_AuthScreen()
+
+
 
     def bottom_bar_conrtol(self,page_number):
         if BottomBar_showing_info[page_number][ID_BTN_BOTTOM_BAR_NEXT] is True:
@@ -413,6 +448,7 @@ class MainWindow(QtWidgets.QMainWindow):
     @pyqtSlot()
     def btn_system_info_released(self):
         print("Not implemented")
+        self.stck_wnd.setCurrentIndex(self.screens[ID_LOGIN_SCREEN])
 
     @pyqtSlot()
     def btn_internet_released(self):
@@ -544,6 +580,8 @@ class MainWindow(QtWidgets.QMainWindow):
         rw = w/2 - dw/2
         rh = h/2 - dh/2 -5
         dialog.setGeometry(rw,rh,dialog.width(),dialog.height())
+        dialog.txt_msg.setText(QtWidgets.QApplication.translate('wifi-fail','Password Incorrect\nPlease try again'))
+        dialog.btn_ok.setText(QtWidgets.QApplication.translate('wifi-fail','OK'))
         dialog.open()
 
     def retranslateUi(self):
@@ -556,34 +594,37 @@ class MainWindow(QtWidgets.QMainWindow):
         self.lbl_password.setText(QtWidgets.QApplication.translate('Test','Password'))
         self.btn_login.setText(QtWidgets.QApplication.translate('Test','Login'))
         
-        self.scan_auth_label.setText(QtWidgets.QApplication.translate('Test','Scan to Authenticate'))
-        self.scan_dwnld_label.setText(QtWidgets.QApplication.translate('Test','Scan to download app'))
-        self.scan_auth_btn_test.setText(QtWidgets.QApplication.translate('Test','TEST BUTTON'))
-        
-        self.scan_screen_label.setText(QtWidgets.QApplication.translate('Test','Scan to Check'))
-        self.scan_check_btn_test.setText(QtWidgets.QApplication.translate('Test','TEST BUTTON'))
-        
-        self.pati_info_label.setText(QtWidgets.QApplication.translate('Test','Patient Information'))
+        self.label_3.setText(QtWidgets.QApplication.translate('Test','Scan to Authenticate'))
+        self.label_2.setText(QtWidgets.QApplication.translate('Test','Scan to download app'))
+
+
+        self.label_5.setText(QtWidgets.QApplication.translate('Test','Patient Information'))
         self.btn_female.setText(QtWidgets.QApplication.translate('Test','Female'))
         self.btn_male.setText(QtWidgets.QApplication.translate('Test','Male'))
-        self.new_pati_info_label.setText(QtWidgets.QApplication.translate('Test','New patient?'))
+        self.label_6.setText(QtWidgets.QApplication.translate('Test','New patient?'))
         self.btn_yes.setText(QtWidgets.QApplication.translate('Test','Yes'))
         self.btn_no.setText(QtWidgets.QApplication.translate('Test','No'))
         
-        self.slct_trmt_area_label.setText(QtWidgets.QApplication.translate('Test','Select Treatment Area'))
+        self.label_7.setText(QtWidgets.QApplication.translate('Test','Select Treatment Area'))
+        self.txt_shoulder_L.setText(QtWidgets.QApplication.translate('Treatment','Shoulder'))
+        self.txt_shoulder_R.setText(QtWidgets.QApplication.translate('Treatment','Shoulder'))
+        self.txt_arm_L.setText(QtWidgets.QApplication.translate('Treatment','Arm'))
+        self.txt_arm_R.setText(QtWidgets.QApplication.translate('Treatment','Arm'))
+        self.txt_thigh_L.setText(QtWidgets.QApplication.translate('Treatment','Thigh'))
+        self.txt_thigh_R.setText(QtWidgets.QApplication.translate('Treatment','Thigh'))
         # self.txt_arm.setText(QtWidgets.QApplication.translate('Test','Arm'))
         # self.txt_thigh.setText(QtWidgets.QApplication.translate('Test','Thigh'))
 
-        self.pos_electrode_label.setText(QtWidgets.QApplication.translate('Test','Position Electrodes'))
+        self.label_8.setText(QtWidgets.QApplication.translate('Test','Position Electrodes'))
         self.txt_shoulder_pos_l.setText(QtWidgets.QApplication.translate('Test','Shoulder'))
         self.txt_shoulder_pos_r.setText(QtWidgets.QApplication.translate('Test','Shoulder'))
 
-        self.timer_label.setText(QtWidgets.QApplication.translate('Test','Timer'))
-        self.applicator_a_label.setText(QtWidgets.QApplication.translate('Test','Applicator A'))
-        self.applicator_b_label.setText(QtWidgets.QApplication.translate('Test','Applicator B'))
+        self.label_11.setText(QtWidgets.QApplication.translate('Test','Timer'))
+        self.label_9.setText(QtWidgets.QApplication.translate('Test','Applicator A'))
+        self.label_10.setText(QtWidgets.QApplication.translate('Test','Applicator B'))
         self.btn_timer_stop.setText(QtWidgets.QApplication.translate('Test','STOP'))
 
-        self.settings_label.setText(QtWidgets.QApplication.translate('Test','SETTINGS'))
+        self.label_15.setText(QtWidgets.QApplication.translate('Test','SETTINGS'))
         self.btn_restore_default.setText(QtWidgets.QApplication.translate('Test','RESTORE DEFAULTS'))
         self.btn_language.setText(QtWidgets.QApplication.translate('Test','LANGUAGE'))
         self.btn_system_info.setText(QtWidgets.QApplication.translate('Test','SYSTEM INFO'))
@@ -591,22 +632,24 @@ class MainWindow(QtWidgets.QMainWindow):
         self.btn_internet.setText(QtWidgets.QApplication.translate('Test','INTERNET'))
         self.btn_others.setText(QtWidgets.QApplication.translate('Test','OTHERS'))
 
-        self.select_lang_label.setText(QtWidgets.QApplication.translate('Test','Select Your Language'))
+        self.label_12.setText(QtWidgets.QApplication.translate('Test','Select Your Language'))
         self.btn_ok_language.setText(QtWidgets.QApplication.translate('Test','OK'))
 
-        self.choose_nw_label.setText(QtWidgets.QApplication.translate('Test','Choose a network'))
+        self.label_17.setText(QtWidgets.QApplication.translate('Test','Choose a network'))
         self.btn_wifi_search.setText(QtWidgets.QApplication.translate('Test','SEARCH'))
 
-        self.inp_pass_label.setText(QtWidgets.QApplication.translate('Test','Input Password'))
+        self.label_19.setText(QtWidgets.QApplication.translate('Test','Input Password'))
         self.btn_cancel_wifi_passwd.setText(QtWidgets.QApplication.translate('Test','CANCEL'))
         self.btn_ok_wifi_passwd.setText(QtWidgets.QApplication.translate('Test','OK'))
 
-        self.net_conn_label.setText(QtWidgets.QApplication.translate('Test','NETWORK CONNECTED'))
+        self.label_14.setText(QtWidgets.QApplication.translate('Test','NETWORK CONNECTED'))
         self.btn_net_conn_ok.setText(QtWidgets.QApplication.translate('Test','OK'))
 
     @QtCore.pyqtSlot(int)
     def change_func(self, index):
         data = self.lang_combo.itemData(index)
+        self.langfile = data
+        QtWidgets.QApplication.instance().removeTranslator(self.trans)
         if data:
             self.trans.load(data)
             QtWidgets.QApplication.instance().installTranslator(self.trans)
@@ -629,6 +672,65 @@ class MainWindow(QtWidgets.QMainWindow):
         dialog.exec()
 
 
+    # dialog for general message - QR Error message
+    def show_dialog_with_message_qr_msg(self,msg):
+        dialog = QtWidgets.QDialog(self)
+        uic.loadUi(STRING_UI_FILE_LOGIN_FAIL,dialog)
+        dialog.txt_msg.setText(QtWidgets.QApplication.translate('qr-error','Error\nCould not receive QR Code'))
+        dialog.btn_ok.setText(QtWidgets.QApplication.translate('qr-error',"OK"))
+        dialog.setModal(True)
+        dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
+        self.positing_dialog_on_center(dialog)
+        dialog.exec()
+
+
+    # dialog for general message - Unknown Error
+    def show_dialog_with_message_unk_error(self,msg):
+        dialog = QtWidgets.QDialog(self)
+        uic.loadUi(STRING_UI_FILE_LOGIN_FAIL,dialog)
+        dialog.txt_msg.setText(QtWidgets.QApplication.translate('unknown-error','Unknown error occurred\nGo to Start Page'))
+        dialog.btn_ok.setText(QtWidgets.QApplication.translate('unknown-error',"OK"))
+        dialog.setModal(True)
+        dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
+        self.positing_dialog_on_center(dialog)
+        dialog.exec()
+
+
+    # dialog for general message - QR Scan Success
+    def show_dialog_with_message_qr_success(self,msg):
+        dialog = QtWidgets.QDialog(self)
+        uic.loadUi(STRING_UI_FILE_LOGIN_FAIL,dialog)
+        dialog.txt_msg.setText(QtWidgets.QApplication.translate('qr-scan-success','Scan Success!'))
+        dialog.btn_ok.setText(QtWidgets.QApplication.translate('qr-scan-success',"OK"))
+        dialog.setModal(True)
+        dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
+        self.positing_dialog_on_center(dialog)
+        dialog.exec()
+
+
+        # dialog for general message - QR Scan Fail
+    def show_dialog_with_message_qr_fail(self,msg):
+        dialog = QtWidgets.QDialog(self)
+        uic.loadUi(STRING_UI_FILE_LOGIN_FAIL,dialog)
+        dialog.txt_msg.setText(QtWidgets.QApplication.translate('qr-scan-fail','Scan Error\nPlease try again.'))
+        dialog.btn_ok.setText(QtWidgets.QApplication.translate('qr-scan-fail',"OK"))
+        dialog.setModal(True)
+        dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
+        self.positing_dialog_on_center(dialog)
+        dialog.exec()
+
+
+    # dialog for general message - Treatment Done
+    def show_dialog_with_message_trmt_done(self,msg):
+        dialog = QtWidgets.QDialog(self)
+        uic.loadUi(STRING_UI_FILE_LOGIN_FAIL,dialog)
+        dialog.txt_msg.setText(QtWidgets.QApplication.translate('treatment-done','Treatment is done go to Scan screen.'))
+        dialog.btn_ok.setText(QtWidgets.QApplication.translate('treatment-done',"OK"))
+        dialog.setModal(True)
+        dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
+        self.positing_dialog_on_center(dialog)
+        dialog.exec()
+
 
     # dialog for loading with message
     def show_loading_dialog_with_message(self, msg):
@@ -638,9 +740,34 @@ class MainWindow(QtWidgets.QMainWindow):
         self.dialog_on_screen = dialog
         dialog.exec()
 
+    #for login loading dialog box (TESTING PURPOSE)
+    def show_loading_dialog_with_message_login(self, msg):
+        dialog = LoadingDialogWithMessage_login(self, self.langfile)
+        dialog.setMessage(msg)
+        self.positing_dialog_on_center(dialog)
+        self.dialog_on_screen = dialog
+        dialog.exec()
+
+    #for login loading dialog box - Server (TESTING PURPOSE)
+    def show_loading_dialog_with_message_server(self, msg):
+        dialog = LoadingDialogWithMessage_server(self, self.langfile)
+        dialog.setMessage(msg)
+        self.positing_dialog_on_center(dialog)
+        self.dialog_on_screen = dialog
+        dialog.exec()
+
+    #for login loading dialog box - QR (TESTING PURPOSE)
+    def show_loading_dialog_with_message_qr(self, msg):
+        dialog = LoadingDialogWithMessage_qr(self, self.langfile)
+        dialog.setMessage(msg)
+        self.positing_dialog_on_center(dialog)
+        self.dialog_on_screen = dialog
+        dialog.exec()
+
+
     # dialog for wifi loading message
     def show_wifi_loading_dialog_with_message(self, msg):
-        dialog = WifiLoadingDialogWithMessage(self)
+        dialog = WifiLoadingDialogWithMessage(self, self.langfile)
         dialog.setMessage(msg)
         self.positing_dialog_on_center(dialog)
         self.dialog_on_screen = dialog
@@ -667,8 +794,6 @@ class MainWindow(QtWidgets.QMainWindow):
         dialog.setGeometry(rw,rh,dialog.width(),dialog.height())
 
 
-    # for test will be removed
-#     @pyqtSlot(bool)
     def set_graphic(self,sex):
         self.scene_patient = QtWidgets.QGraphicsScene()
         if sex == SEX.MALE:
@@ -678,10 +803,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.scene_patient.addPixmap(self.image_patient)
         self.gv_humanbody.setScene(self.scene_patient)
         self.gv_humanbody.setRenderHint(QtGui.QPainter.Antialiasing)
+        txt_label_list = [self.txt_shoulder_L,self.txt_shoulder_R,self.txt_arm_R,self.txt_arm_L,self.txt_thigh_R,self.txt_thigh_L]
+
+        # for lbl in txt_label_list:
+        #     lbl.setStyleSheet(STR_COLOR_STYLE_FOR_LABEL%(FONT_COLOR_DISABLED_R,FONT_COLOR_DISABLED_G,FONT_COLOR_DISABLED_B))
 
         self.txt_shoulder_L.show()
         self.txt_shoulder_R.show()
-
         self.txt_arm_L.show()
         self.txt_thigh_L.show()
         self.txt_arm_R.show()
@@ -703,52 +831,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.txt_shoulder_pos_r.show()
         self.txt_shoulder_pos_r.show()
 
-    # @pyqtSlot(bool)
-    # def btn_test_female_clicked(self,clicked):
-    #     if clicked is not True:
-    #         return
-    #
-    #     self.scene_female = QtWidgets.QGraphicsScene()
-    #     self.image_female = QtGui.QPixmap(IMAGE_FOR_FEMALE)
-    #     self.scene_female.addPixmap(self.image_female)
-    #     self.gv_humanbody.setScene(self.scene_female)
-    #     self.gv_humanbody.setRenderHint(QtGui.QPainter.Antialiasing)
-    #     self.txt_shoulder.show()
-    #     self.txt_arm.show()
-    #     self.txt_thigh.show()
-    #     self.line_shoulder.show()
-    #     self.line_arm.show()
-    #     self.line_thigh.show()
-    #
-    # @pyqtSlot(bool)
-    def btn_test_male_pos_clicked(self,clicked):
-        if clicked is not True:
-            return
-        # self.scene_patient = QtWidgets.QGraphicsScene()
-        # self.image_patient = QtGui.QPixmap(IMAGE_FOR_MALE)
-        # self.scene_patient.addPixmap(self.image_patient)
-        # self.gv_humanbody_pos.setScene(self.scene_patient)
-        # self.gv_humanbody_pos.setRenderHint(QtGui.QPainter.Antialiasing)
-        #
-        # self.line_shoulder_pos_l.show()
-        # self.line_shoulder_pos_r.show()
-        # self.txt_shoulder_pos_r.show()
-        # self.txt_shoulder_pos_r.show()
-    #
-    # @pyqtSlot(bool)
-    # def btn_test_female_pos_clicked(self,clicked):
-    #     if clicked is not True:
-    #         return
-    #     self.scene_female = QtWidgets.QGraphicsScene()
-    #     self.image_female = QtGui.QPixmap(IMAGE_FOR_FEMALE)
-    #     self.scene_female.addPixmap(self.image_female)
-    #     self.gv_humanbody_pos.setScene(self.scene_female)
-    #     self.gv_humanbody_pos.setRenderHint(QtGui.QPainter.Antialiasing)
-    #
-    #     self.line_shoulder_pos_l.show()
-    #     self.line_shoulder_pos_r.show()
-    #     self.txt_shoulder_pos_r.show()
-    #     self.txt_shoulder_pos_r.show()
+
     def close_current_dialog(self):
         self.dialog_on_screen.close()
 
