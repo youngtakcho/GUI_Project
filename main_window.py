@@ -447,10 +447,10 @@ class MainWindow(QtWidgets.QMainWindow):
         print(msg)
         self.close_current_dialog()
         if is_ready:
-            self.show_dialog_with_message("Hardware is ready!")
+            self.show_dialog_with_message_hdw_success("Hardware is ready!")
             self.btn_next_released()
         else:
-            self.show_dialog_with_message("Hardware Error\nGo to Authentication Screen")
+            self.show_dialog_with_message_hdw_error("Hardware Error\nGo to Authentication Screen")
             self.goto_AuthScreen()
 
 
@@ -668,11 +668,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_8.setText(QtWidgets.QApplication.translate('Test','Position Electrodes'))
         self.txt_shoulder_pos_l.setText(QtWidgets.QApplication.translate('Test','Shoulder'))
         self.txt_shoulder_pos_r.setText(QtWidgets.QApplication.translate('Test','Shoulder'))
+        self.txt_arm_L_2.setText(QtWidgets.QApplication.translate('Test','Arm'))
+        self.txt_arm_R_2.setText(QtWidgets.QApplication.translate('Test','Arm'))
+        self.txt_thigh_L_2.setText(QtWidgets.QApplication.translate('Test','Thigh'))
+        self.txt_thigh_R_2.setText(QtWidgets.QApplication.translate('Test','Thigh'))
 
         self.label_11.setText(QtWidgets.QApplication.translate('Test','Timer'))
         self.label_9.setText(QtWidgets.QApplication.translate('Test','Applicator A'))
         self.label_10.setText(QtWidgets.QApplication.translate('Test','Applicator B'))
         self.btn_timer_stop.setText(QtWidgets.QApplication.translate('Test','STOP'))
+        self.btn_timer_lock.setText(QtWidgets.QApplication.translate('Test','LOCK'))
 
         self.label_15.setText(QtWidgets.QApplication.translate('Test','SETTINGS'))
         self.btn_restore_default.setText(QtWidgets.QApplication.translate('Test','RESTORE DEFAULTS'))
@@ -711,11 +716,23 @@ class MainWindow(QtWidgets.QMainWindow):
             self.retranslateUi()
         super(MainWindow, self).changeEvent(event)
 
-# dialog for general message
-    def show_dialog_with_message(self,msg):
+# dialog for general message - Hardware Success
+    def show_dialog_with_message_hdw_success(self,msg):
         dialog = QtWidgets.QDialog(self)
         uic.loadUi(STRING_UI_FILE_LOGIN_FAIL,dialog)
-        dialog.txt_msg.setText(msg)
+        dialog.txt_msg.setText(QtWidgets.QApplication.translate('Test','Hardware is ready!'))
+        dialog.btn_ok.setText(QtWidgets.QApplication.translate('Test',"OK"))
+        dialog.setModal(True)
+        dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
+        self.positing_dialog_on_center(dialog)
+        dialog.exec()
+
+# dialog for general message - Hardware Error
+    def show_dialog_with_message_hdw_error(self,msg):
+        dialog = QtWidgets.QDialog(self)
+        uic.loadUi(STRING_UI_FILE_LOGIN_FAIL,dialog)
+        dialog.txt_msg.setText(QtWidgets.QApplication.translate('Test','Hardware Error\nGo to Authentication Screen'))
+        dialog.btn_ok.setText(QtWidgets.QApplication.translate('Test',"OK"))
         dialog.setModal(True)
         dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
         self.positing_dialog_on_center(dialog)
@@ -785,7 +802,7 @@ class MainWindow(QtWidgets.QMainWindow):
     # dialog for loading with message
     def show_loading_dialog_with_message(self, msg):
         dialog = LoadingDialogWithMessage(self)
-        dialog.setMessage(msg)
+        dialog.setMessage(QtWidgets.QApplication.translate('Test',"""Treatment will be started.\nPlease wait for Hardware to be ready"""))
         self.positing_dialog_on_center(dialog)
         self.dialog_on_screen = dialog
         dialog.exec()
@@ -828,7 +845,18 @@ class MainWindow(QtWidgets.QMainWindow):
         dialog = QtWidgets.QDialog(self)
         dialog.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
         uic.loadUi(STRING_UI_FILE_HTML_DIALOG,dialog)
-        dialog.html_view.setText(msg)
+        dialog.html_view.setText(QtWidgets.QApplication.translate('HTML',"""
+        <html>
+        <style>
+        h1 {text-align: center;}
+        p {text-align: center;}
+        div {text-align: center;}
+        </style>
+        <h1>Welcome, Miss Li!</h1>
+        <p>Your scan authentication has passed. </p>
+        <p>Please follow further instruction in the screen to proceed to next step.</p>
+        <p>If you have any question, please don't hesitate to contact us.</p>
+        <html>"""))
         self.positing_dialog_on_center(dialog)
         self.dialog_on_screen = dialog
         dialog.exec()

@@ -804,7 +804,7 @@ border-image-repeat : stretch;
            <property name="font">
             <font>
              <family>Segoe UI</family>
-             <pointsize>20</pointsize>
+             <pointsize>17</pointsize>
             </font>
            </property>
            <property name="styleSheet">
@@ -917,7 +917,7 @@ color:rgba(15, 220, 232,255);
            <property name="font">
             <font>
              <family>Segoe UI</family>
-             <pointsize>100</pointsize>
+             <pointsize>85</pointsize>
             </font>
            </property>
            <property name="styleSheet">
@@ -1956,7 +1956,7 @@ color:rgb(80,80,80);
            <property name="font">
             <font>
              <family>Segoe UI</family>
-             <pointsize>100</pointsize>
+             <pointsize>85</pointsize>
             </font>
            </property>
            <property name="styleSheet">
@@ -2717,7 +2717,7 @@ color:rgb(80,80,80);
               <property name="font">
                <font>
                 <family>Segoe UI</family>
-                <pointsize>58</pointsize>
+                <pointsize>55</pointsize>
                </font>
               </property>
               <property name="text">
@@ -3016,7 +3016,7 @@ border-image: url(./images/frame11.png);
               <property name="font">
                <font>
                 <family>Segoe UI</family>
-                <pointsize>58</pointsize>
+                <pointsize>55</pointsize>
                </font>
               </property>
               <property name="text">
@@ -3279,7 +3279,7 @@ border-radius: 4px;
               <property name="font">
                <font>
                 <family>Segoe UI</family>
-                <pointsize>58</pointsize>
+                <pointsize>45</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -3318,7 +3318,7 @@ border-radius: 4px;
               <property name="font">
                <font>
                 <family>Segoe UI</family>
-                <pointsize>58</pointsize>
+                <pointsize>45</pointsize>
                </font>
               </property>
               <property name="styleSheet">
