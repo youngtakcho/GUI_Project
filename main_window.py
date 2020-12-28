@@ -422,8 +422,12 @@ class MainWindow(QtWidgets.QMainWindow):
     # for general control for screens
     @pyqtSlot(int)
     def page_changed(self,page_number):
-        self.screen_changed_stack.append(page_number)
         self.bottom_bar_conrtol(page_number)
+        # if page_number > self.screens[ID_SETTING_SCREEN]:
+        #     return
+        # if len(self.screen_changed_stack) > 0 and page_number == self.screen_changed_stack[-1]:
+        #     return
+        self.screen_changed_stack.append(page_number)
         if page_number == self.screens[ID_TIMER_SCREEN]:
             self.display_timer()
             # t = WaitHardwarePreparation(parent=self)
@@ -581,8 +585,8 @@ class MainWindow(QtWidgets.QMainWindow):
     @pyqtSlot()
     def btn_ok_language_released(self):
         #self.change_func()
-        self.stck_wnd.setCurrentIndex(self.screens[ID_SETTING_SCREEN])
-
+        # self.stck_wnd.setCurrentIndex(self.screens[ID_SETTING_SCREEN])
+        self.btn_back_released()
 
 
     def search_wifi(self): #function to search and display all the available Wifi networks
